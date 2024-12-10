@@ -84,12 +84,13 @@ module.exports = (() => {
                         fileStream.close();
                         BdApi.showToast("Plugin downloaded successfully!", {
                           type: "success",
+                          icon: "ℹ️"
                         });
                       });
                     } else {
                       BdApi.showToast(
                         "Failed to download plugin. Please try again.",
-                        { type: "error" }
+                        { type: "error", icon: "⚠️" }
                       );
                     }
                   })
@@ -97,7 +98,8 @@ module.exports = (() => {
                     require("electron").shell.openExternal(fileUrl);
                     BdApi.showToast(
                       "Error occurred. Opening the file in browser.",
-                      { type: "warning" }
+                      { type: "warning", icon: "⚠️" }
+                      
                     );
                   });
               },
@@ -128,12 +130,14 @@ module.exports = (() => {
                     console.log("🎙️ Recording has started!");
                     BdApi.showToast("🎙️ Recording started successfully!", {
                       type: "success",
+                      icon: "ℹ️"
                     });
                   } else {
                     BdApi.showToast(
                       "❌ Failed to start recording. Please try again!",
                       {
                         type: "error",
+                        icon: "⚠️"
                       }
                     );
                   }
@@ -167,17 +171,19 @@ module.exports = (() => {
                         });
                       } else {
                         BdApi.showToast("Failed to finish recording", {
-                          type: "failure",
-                        });
+                          type: "error",
+                          icon: "⚠️"
+                        });                        
                       }
                     });
                   } catch (e) {
                     console.log(e);
                   }
                 }
-                console.log("STOPPED RECORDING");
+                console.log("RECORDING STOPPED! 🎤");
               });
             };
+
             static generateRandomFileName = function () {
               const names = [
                 "PixelPurr😺",
@@ -275,6 +281,86 @@ module.exports = (() => {
                 "ChirpTee🐦",
                 "TwistBling🎠",
                 "DoodleSnap💫",
+                "GlitterBuzz💫",
+                "SqueakBling🐭",
+                "BuzzFizz💥",
+                "ChirpDazzle🐦",
+                "TwistFizz🎠",
+                "DoodleBling🌀",
+                "SparkleChirp💫",
+                "PopSnap💧",
+                "FizzChirp💦",
+                "BlingSwoosh🎠",
+                "SizzlePop💥",
+                "TwistBuzz🔥",
+                "DoodleFizz🌀",
+                "ChirpTing🐦",
+                "SlickBling🔥",
+                "WhisperPop🌌",
+                "BuzzSwoosh💥",
+                "GlimmerChirp💎",
+                "FizzSnap💦",
+                "BlingTwist🎠",
+                "DoodleBling💎",
+                "SizzleChirp🐦",
+                "BuzzFizz💦",
+                "PopSparkle💫",
+                "TwistFizz🎠",
+                "ChirpSizzle🐦",
+                "FizzBop💧",
+                "DoodleBling🌀",
+                "WhisperBuzz🌌",
+                "SizzleFizz🔥",
+                "BuzzChirp💥",
+                "TwistBop🎠",
+                "GlimmerFizz💎",
+                "SlickFizz🔥",
+                "PopTwist🎈",
+                "DoodleBuzz🌀",
+                "FizzSnap💦",
+                "ChirpPop🐦",
+                "TwistBling🎠",
+                "SizzleBuzz🔥",
+                "GlimmerBling💎",
+                "PopSizzle💥",
+                "WhisperFling🌌",
+                "BuzzFizz💥",
+                "DoodleChirp🌀",
+                "FizzPop💧",
+                "TwistSnap🎠",
+                "SizzleBling🔥",
+                "WhisperBop🌌",
+                "BuzzFizz💦",
+                "ChirpTwist🐦",
+                "DoodleFizz🌀",
+                "SizzleFizz🔥",
+                "FizzBop💧",
+                "GlimmerBling💎",
+                "BuzzSnap💥",
+                "PopChirp🎈",
+                "TwistSizzle🎠",
+                "WhisperSnap🌌",
+                "FizzBuzz💦",
+                "DoodleChirp💫",
+                "SizzleFizz🔥",
+                "ChirpBling🐦",
+                "PopFizz💥",
+                "BuzzFizz💦",
+                "FizzBop💧",
+                "TwistFizz🎠",
+                "GlimmerFizz💎",
+                "WhisperBuzz🌌",
+                "SizzleBling🔥",
+                "DoodleSnap🌀",
+                "FizzPop💧",
+                "ChirpFizz🐦",
+                "TwistBuzz🎠",
+                "SizzleBling🔥",
+                "PopSnap💥",
+                "FizzChirp💦",
+                "BuzzBling💥",
+                "DoodleFizz🌀",
+                "WhisperFizz🌌",
               ];
               return names[Math.floor(Math.random() * names.length)];
             };
@@ -289,15 +375,12 @@ module.exports = (() => {
             if (recording === true) {
               record.start();
               recording = false;
-              showToast("🎙️ Recording started successfully!", {
-                type: "success",
-              });
             } else {
               record.stop();
               recording = true;
               console.log("STOPPED RECORDING");
               showToast("🛑 Recording stopped!", {
-                type: "info",
+                type: "info", icon: "ℹ️",
               });
             }
           }
