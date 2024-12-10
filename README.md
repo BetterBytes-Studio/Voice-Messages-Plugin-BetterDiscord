@@ -81,4 +81,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) fi
 ### Credits
 - **Author:** UnStackss
 - **GitHub:** [UnStackss](https://github.com/UnStackss)
-- **Plugin Library:** [ZeresPluginLibrary](https://github.com/zerebos/BDPluginLibrary)
+- **Plugin Library:** [ZeresPluginLibrary](https://betterdiscord.app/plugin/ZeresPluginLibrary)
