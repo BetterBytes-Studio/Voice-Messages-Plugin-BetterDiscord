@@ -1,5 +1,9 @@
 # VoiceMessages Plugin for BetterDiscord
 
+![Downloads](https://img.shields.io/github/downloads/UnStackss/Voice-Messages-Plugin-BetterDiscord/total?style=for-the-badge)
+![Latest Release](https://img.shields.io/github/v/release/UnStackss/Voice-Messages-Plugin-BetterDiscord?style=for-the-badge)
+![License](https://img.shields.io/github/license/UnStackss/Voice-Messages-Plugin-BetterDiscord?style=for-the-badge)
+
 ## Overview
 VoiceMessages is a simple yet powerful plugin for BetterDiscord that allows users to send voice messages in their Discord channels. 🎙️
 
