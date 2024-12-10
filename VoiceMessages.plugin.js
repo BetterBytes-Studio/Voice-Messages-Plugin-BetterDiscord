@@ -147,11 +147,7 @@ module.exports = (() => {
                   try {
                     require("fs").readFile(filePath, {}, (err, buf) => {
                       if (buf) {
-                        const timestamp = new Date()
-                          .toISOString()
-                          .replace(/[:.]/g, "-");
-                        const userName = BdApi.getUsername();
-
+                        const randomName = this.generateRandomFileName();
                         WebpackModules.getByProps(
                           "instantBatchUpload",
                           "upload"
@@ -164,16 +160,15 @@ module.exports = (() => {
                                   type: "audio/ogg; codecs=opus",
                                 }),
                               ],
-                              `${userName}-${timestamp}.ogg`,
+                              `${randomName}.ogg`,
                               { type: "audio/ogg; codecs=opus" }
                             ),
                           ],
                         });
                       } else {
-                        BdApi.showToast(
-                          "🚨 Error: Recording could not be completed. Please retry!",
-                          { type: "failure" }
-                        );
+                        BdApi.showToast("Failed to finish recording", {
+                          type: "failure",
+                        });
                       }
                     });
                   } catch (e) {
@@ -182,6 +177,106 @@ module.exports = (() => {
                 }
                 console.log("STOPPED RECORDING");
               });
+            };
+            static generateRandomFileName = function () {
+              const names = [
+                "PixelPurr😺",
+                "FuzzyFling🦄",
+                "ChirpChomp🐦",
+                "BlipBop🎉",
+                "DoodlePop🧚‍♀️",
+                "SizzleSnap🔥",
+                "GlimmerGlow🌟",
+                "SqueakZoom🐭",
+                "FizzFizz💧",
+                "BuzzBop💥",
+                "ZapZap⚡",
+                "TwinkleTee✨",
+                "SparkleSwoosh💫",
+                "TwangTee🎵",
+                "QuirkyQuip🤪",
+                "ChirpBing🐣",
+                "PopFizz🍾",
+                "DoodleBloop🌀",
+                "GlimmerPop💎",
+                "SqueakZap⚡️",
+                "TwistyTing🎠",
+                "SnappySparkle✨",
+                "WhisperWiz🌌",
+                "GlitzyGlimpse💫",
+                "FuzzyFizz🐼",
+                "BubblyBuzz💧",
+                "SlickSizzle🔥",
+                "QuirkyChirp🐦",
+                "DazzleGlow🌟",
+                "GlimmerSnap✨",
+                "WhisperTing🕊️",
+                "PopFizz🎈",
+                "SqueakySnap🐭",
+                "FizzFizz💦",
+                "BuzzBling💎",
+                "TwinklePop🌠",
+                "DoodleSwoosh🌌",
+                "SnapSparkle🌟",
+                "BlingBop💥",
+                "WhisperFizz✨",
+                "GlimmerTee🎵",
+                "SizzleBling🔥",
+                "PopBling💫",
+                "TwistySwoosh🎠",
+                "WhisperSparkle🌌",
+                "GlitzyChirp🐦",
+                "FizzBling💧",
+                "BuzzPop💥",
+                "SlickTing🔥",
+                "QuirkyBop🤪",
+                "ChirpSizzle🐦",
+                "TwistBling🎠",
+                "DoodlePop💎",
+                "GlimmerSwoosh✨",
+                "SnapBuzz💧",
+                "WhisperPop🌌",
+                "FizzTing💦",
+                "BuzzSnap💥",
+                "SizzleChirp🔥",
+                "TwistSwoosh🎠",
+                "PopFizz✨",
+                "GlimmerBop💎",
+                "ChirpTing🐦",
+                "WhisperSwoosh🌌",
+                "TwistPop🎠",
+                "DoodleSnap💫",
+                "SizzleFling🔥",
+                "BuzzBling💥",
+                "TwistBop🎠",
+                "GlimmerFizz✨",
+                "PopTing💦",
+                "SlickSnap🔥",
+                "BlingChirp💎",
+                "WhisperBling🌌",
+                "DoodleFling🌀",
+                "FizzBuzz💦",
+                "TwistBling🎠",
+                "PopSizzle💥",
+                "ChirpBling🐦",
+                "GlimmerSwoosh✨",
+                "FizzPop💧",
+                "TwistSnap🎠",
+                "BlingSizzle💫",
+                "WhisperFizz🌌",
+                "DoodleBop💫",
+                "FizzBop💦",
+                "GlimmerFling💎",
+                "SizzlePop🔥",
+                "TwistTee🎠",
+                "WhisperSnap🌌",
+                "PopFizz💥",
+                "BlingSwoosh💫",
+                "ChirpTee🐦",
+                "TwistBling🎠",
+                "DoodleSnap💫",
+              ];
+              return names[Math.floor(Math.random() * names.length)];
             };
           }
 
