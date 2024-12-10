@@ -63,58 +63,45 @@ module.exports = (() => {
               confirmText: "Download Now",
               cancelText: "Cancel",
               onConfirm: () => {
-                const fs = require("fs");
-                const https = require("https");
-                const path = require("path");
-
                 const fileUrl =
                   "https://raw.githubusercontent.com/zerebos/BDPluginLibrary/3f321f9a3b21f3829277870068b98673ffd5c869/release/0PluginLibrary.plugin.js";
-                const filePath = path.join(
+                const filePath = require("path").join(
                   BdApi.Plugins.folder,
                   "0PluginLibrary.plugin.js"
                 );
 
-                https
-                  .get(fileUrl, (response) => {
-                    if (response.statusCode !== 200) {
+                BdApi.Net.fetch(fileUrl, { method: "GET" })
+                  .then((response) => {
+                    if (!response.ok) {
                       BdApi.showToast(
                         "Failed to download plugin. Please try again.",
-                        {
-                          type: "error",
-                          icon: "⚠️",
-                        }
+                        { type: "error", icon: "⚠️" }
                       );
-                      return;
+                      throw new Error("Network response was not ok.");
                     }
-
-                    const fileStream = fs.createWriteStream(filePath);
-                    response.pipe(fileStream);
-
-                    fileStream.on("finish", () => {
-                      fileStream.close(() => {
+                    return response.text();
+                  })
+                  .then((data) => {
+                    require("fs").writeFile(filePath, data, (err) => {
+                      if (err) {
+                        BdApi.showToast(
+                          "Error occurred. Failed to save plugin.",
+                          { type: "error", icon: "⚠️" }
+                        );
+                      } else {
                         BdApi.showToast("Plugin downloaded successfully!", {
                           type: "success",
                           icon: "ℹ️",
                         });
-                      });
-                    });
-
-                    fileStream.on("error", (err) => {
-                      fs.unlink(filePath, () => {});
-                      BdApi.showToast(
-                        "Error occurred. Failed to download plugin.",
-                        {
-                          type: "error",
-                          icon: "⚠️",
-                        }
-                      );
+                      }
                     });
                   })
-                  .on("error", (err) => {
+                  .catch((error) => {
                     BdApi.showToast(
-                      "Network error. Please check your connection and try again.",
-                      { type: "error", icon: "⚠️" }
+                      "Error occurred. Opening the file in browser.",
+                      { type: "warning", icon: "⚠️" }
                     );
+                    require("electron").shell.openExternal(fileUrl);
                   });
               },
             }
