@@ -76,30 +76,44 @@ module.exports = (() => {
 
                 https
                   .get(fileUrl, (response) => {
-                    if (response.statusCode === 200) {
-                      const fileStream = fs.createWriteStream(filePath);
-                      response.pipe(fileStream);
-
-                      fileStream.on("finish", () => {
-                        fileStream.close();
-                        BdApi.showToast("Plugin downloaded successfully!", {
-                          type: "success",
-                          icon: "ℹ️"
-                        });
-                      });
-                    } else {
+                    if (response.statusCode !== 200) {
                       BdApi.showToast(
                         "Failed to download plugin. Please try again.",
-                        { type: "error", icon: "⚠️" }
+                        {
+                          type: "error",
+                          icon: "⚠️",
+                        }
                       );
+                      return;
                     }
+
+                    const fileStream = fs.createWriteStream(filePath);
+                    response.pipe(fileStream);
+
+                    fileStream.on("finish", () => {
+                      fileStream.close(() => {
+                        BdApi.showToast("Plugin downloaded successfully!", {
+                          type: "success",
+                          icon: "ℹ️",
+                        });
+                      });
+                    });
+
+                    fileStream.on("error", (err) => {
+                      fs.unlink(filePath, () => {});
+                      BdApi.showToast(
+                        "Error occurred. Failed to download plugin.",
+                        {
+                          type: "error",
+                          icon: "⚠️",
+                        }
+                      );
+                    });
                   })
-                  .on("error", () => {
-                    require("electron").shell.openExternal(fileUrl);
+                  .on("error", (err) => {
                     BdApi.showToast(
-                      "Error occurred. Opening the file in browser.",
-                      { type: "warning", icon: "⚠️" }
-                      
+                      "Network error. Please check your connection and try again.",
+                      { type: "error", icon: "⚠️" }
                     );
                   });
               },
@@ -130,14 +144,14 @@ module.exports = (() => {
                     console.log("🎙️ Recording has started!");
                     BdApi.showToast("🎙️ Recording started successfully!", {
                       type: "success",
-                      icon: "ℹ️"
+                      icon: "ℹ️",
                     });
                   } else {
                     BdApi.showToast(
                       "❌ Failed to start recording. Please try again!",
                       {
                         type: "error",
-                        icon: "⚠️"
+                        icon: "⚠️",
                       }
                     );
                   }
@@ -172,8 +186,8 @@ module.exports = (() => {
                       } else {
                         BdApi.showToast("Failed to finish recording", {
                           type: "error",
-                          icon: "⚠️"
-                        });                        
+                          icon: "⚠️",
+                        });
                       }
                     });
                   } catch (e) {
@@ -380,7 +394,8 @@ module.exports = (() => {
               recording = true;
               console.log("STOPPED RECORDING");
               showToast("🛑 Recording stopped!", {
-                type: "info", icon: "ℹ️",
+                type: "info",
+                icon: "ℹ️",
               });
             }
           }
@@ -403,37 +418,7 @@ module.exports = (() => {
                 this.getVersion(),
                 "https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js"
               );
-              this.loadSettings();
-              this.addSettingsPanel();
               document.addEventListener("keydown", startFunc);
-            }
-
-            loadSettings() {
-              const savedKeybind = this.settings.keybind;
-              this.settings.keybind = savedKeybind || "F12";
-            }
-      
-            saveSettings() {
-              this.settings.keybind = this.settingsPanel.querySelector("#keybind-input").value;
-              BdApi.showToast(`Keybind saved to ${this.settings.keybind}`, { type: 'success' });
-            }
-      
-            addSettingsPanel() {
-              this.settingsPanel = new SettingPanel()
-                .setName("VoiceMessages Settings")
-                .addInput("Keybind", "Set the keybind for starting/stopping voice recording", {
-                  id: "keybind-input",
-                  value: this.settings.keybind,
-                  onChange: (value) => {
-                    this.settings.keybind = value;
-                  },
-                })
-                .addButton("Save Settings", "Save the current settings", {
-                  onClick: () => {
-                    this.saveSettings();
-                  },
-                })
-                .render();
             }
 
             onStop() {
