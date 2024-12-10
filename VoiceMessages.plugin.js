@@ -36,17 +36,6 @@ module.exports = (() => {
         ],
       },
     ],
-    settings: [
-      {
-        name: "Keybind",
-        id: "keybind",
-        type: "keybind",
-        default: "F12",
-        section: "General",
-        name: "Start Recording",
-        desc: "Press this key to start recording a voice message.",
-      },
-    ],
   };
 
   return !global.ZeresPluginLibrary
@@ -110,6 +99,7 @@ module.exports = (() => {
                     BdApi.showToast(
                       "Error occurred. Opening the file in browser.",
                       { type: "warning", icon: "⚠️" }
+                      
                     );
                   });
               },
@@ -121,7 +111,7 @@ module.exports = (() => {
       }
     : (([Plugin, Api]) => {
         const plugin = (Plugin, Library) => {
-          const { WebpackModules, Settings } = Library;
+          const { WebpackModules } = Library;
 
           ("use strict");
 
@@ -134,8 +124,6 @@ module.exports = (() => {
                 {
                   echoCancellation: true,
                   noiseCancellation: true,
-                  volume: options.volume || 1.0,
-                  maxDuration: options.duration || 30,
                 },
                 (success) => {
                   if (success) {
@@ -185,7 +173,7 @@ module.exports = (() => {
                         BdApi.showToast("Failed to finish recording", {
                           type: "error",
                           icon: "⚠️"
-                        });
+                        });                        
                       }
                     });
                   } catch (e) {
@@ -241,7 +229,7 @@ module.exports = (() => {
                 "GlimmerTee🎵",
                 "SizzleBling🔥",
                 "PopBling💫",
-                "TwistBling🎠",
+                "TwistySwoosh🎠",
                 "WhisperSparkle🌌",
                 "GlitzyChirp🐦",
                 "FizzBling💧",
@@ -265,95 +253,195 @@ module.exports = (() => {
                 "TwistPop🎠",
                 "DoodleSnap💫",
                 "SizzleFling🔥",
-                "BlingBop💥",
-                "WhisperPop🌌",
-                "PopSwoosh💥",
-                "TwistBuzz🎠",
-                "GlimmerTee💫",
-                "FizzTwist💧",
-                "BlingSwoosh💥",
-                "WhisperTing🌌",
-                "GlimmerPop💫",
-                "SizzleBuzz🔥",
+                "BuzzBling💥",
+                "TwistBop🎠",
+                "GlimmerFizz✨",
+                "PopTing💦",
+                "SlickSnap🔥",
+                "BlingChirp💎",
                 "WhisperBling🌌",
+                "DoodleFling🌀",
+                "FizzBuzz💦",
+                "TwistBling🎠",
+                "PopSizzle💥",
+                "ChirpBling🐦",
+                "GlimmerSwoosh✨",
+                "FizzPop💧",
+                "TwistSnap🎠",
+                "BlingSizzle💫",
+                "WhisperFizz🌌",
+                "DoodleBop💫",
+                "FizzBop💦",
+                "GlimmerFling💎",
+                "SizzlePop🔥",
+                "TwistTee🎠",
+                "WhisperSnap🌌",
+                "PopFizz💥",
+                "BlingSwoosh💫",
+                "ChirpTee🐦",
+                "TwistBling🎠",
+                "DoodleSnap💫",
+                "GlitterBuzz💫",
+                "SqueakBling🐭",
+                "BuzzFizz💥",
+                "ChirpDazzle🐦",
+                "TwistFizz🎠",
+                "DoodleBling🌀",
+                "SparkleChirp💫",
+                "PopSnap💧",
+                "FizzChirp💦",
+                "BlingSwoosh🎠",
+                "SizzlePop💥",
+                "TwistBuzz🔥",
+                "DoodleFizz🌀",
+                "ChirpTing🐦",
+                "SlickBling🔥",
+                "WhisperPop🌌",
+                "BuzzSwoosh💥",
+                "GlimmerChirp💎",
+                "FizzSnap💦",
+                "BlingTwist🎠",
+                "DoodleBling💎",
+                "SizzleChirp🐦",
+                "BuzzFizz💦",
+                "PopSparkle💫",
+                "TwistFizz🎠",
+                "ChirpSizzle🐦",
+                "FizzBop💧",
+                "DoodleBling🌀",
+                "WhisperBuzz🌌",
+                "SizzleFizz🔥",
+                "BuzzChirp💥",
+                "TwistBop🎠",
+                "GlimmerFizz💎",
+                "SlickFizz🔥",
+                "PopTwist🎈",
+                "DoodleBuzz🌀",
+                "FizzSnap💦",
+                "ChirpPop🐦",
+                "TwistBling🎠",
+                "SizzleBuzz🔥",
+                "GlimmerBling💎",
+                "PopSizzle💥",
+                "WhisperFling🌌",
+                "BuzzFizz💥",
+                "DoodleChirp🌀",
+                "FizzPop💧",
+                "TwistSnap🎠",
+                "SizzleBling🔥",
+                "WhisperBop🌌",
+                "BuzzFizz💦",
+                "ChirpTwist🐦",
+                "DoodleFizz🌀",
+                "SizzleFizz🔥",
+                "FizzBop💧",
+                "GlimmerBling💎",
+                "BuzzSnap💥",
+                "PopChirp🎈",
+                "TwistSizzle🎠",
+                "WhisperSnap🌌",
+                "FizzBuzz💦",
+                "DoodleChirp💫",
+                "SizzleFizz🔥",
+                "ChirpBling🐦",
+                "PopFizz💥",
+                "BuzzFizz💦",
+                "FizzBop💧",
+                "TwistFizz🎠",
+                "GlimmerFizz💎",
+                "WhisperBuzz🌌",
+                "SizzleBling🔥",
+                "DoodleSnap🌀",
+                "FizzPop💧",
+                "ChirpFizz🐦",
+                "TwistBuzz🎠",
+                "SizzleBling🔥",
+                "PopSnap💥",
+                "FizzChirp💦",
+                "BuzzBling💥",
+                "DoodleFizz🌀",
+                "WhisperFizz🌌",
               ];
               return names[Math.floor(Math.random() * names.length)];
             };
           }
 
+          var recording = true;
+
+          const { showToast } = BdApi;
+          const channel = BdApi.findModuleByProps("getLastSelectedChannelId");
+
+          function toggleRecording() {
+            if (recording === true) {
+              record.start();
+              recording = false;
+            } else {
+              record.stop();
+              recording = true;
+              console.log("STOPPED RECORDING");
+              showToast("🛑 Recording stopped!", {
+                type: "info", icon: "ℹ️",
+              });
+            }
+          }
+
+          startFunc = function (event) {
+            if (event.key === "F12") {
+              toggleRecording();
+              event.preventDefault();
+            }
+          };
           return class VoiceMessages extends Plugin {
-            getSettingsPanel() {
-              const header = document.createElement('h1');
-              header.textContent = 'VoiceMessages Settings';
-              const keybindLabel = document.createElement('label');
-              keybindLabel.textContent = 'Start Recording Keybind:';
-              const keybindInput = document.createElement('input');
-              keybindInput.type = 'text';
-              keybindInput.value = BdApi.loadData(this.getName(), "keybind") || "F12";
-              keybindInput.addEventListener('change', (e) => BdApi.saveData(this.getName(), "keybind", e.target.value));
-
-              const randomNameButton = document.createElement('button');
-              randomNameButton.textContent = 'Generate Random File Name';
-              randomNameButton.addEventListener('click', () => {
-                const randomName = this.generateRandomFileName();
-                BdApi.showToast(`Generated name: ${randomName}`, {
-                  type: "info",
-                  icon: "ℹ️"
-                });
-              });
-
-              const staticNameButton = document.createElement('button');
-              staticNameButton.textContent = 'Use Static Name';
-              staticNameButton.addEventListener('click', () => {
-                BdApi.showToast("Using static name mode", {
-                  type: "info",
-                  icon: "ℹ️"
-                });
-              });
-
-              const settingsContainer = document.createElement('div');
-              settingsContainer.appendChild(header);
-              settingsContainer.appendChild(keybindLabel);
-              settingsContainer.appendChild(keybindInput);
-              settingsContainer.appendChild(randomNameButton);
-              settingsContainer.appendChild(staticNameButton);
-              return settingsContainer;
+            constructor() {
+              super();
+              this.active = true;
             }
 
             onStart() {
-              BdApi.Vault.registerMessagePlugin(
-                "VoiceMessages",
-                "Press F12 to start recording.",
-                {
-                  type: "info",
-                  delay: 5000,
-                }
+              ZLibrary.PluginUpdater.checkForUpdate(
+                this.getName(),
+                this.getVersion(),
+                "https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js"
               );
+              this.loadSettings();
+              this.addSettingsPanel();
+              document.addEventListener("keydown", startFunc);
+            }
 
-              BdApi.Patcher.after("voice-messages-plugin", discordVoice, "startLocalAudioRecording", (thisObject, _, [options], returnValue) => {
-                this.record.start(options);
-                return returnValue;
-              });
-
-              BdApi.Patcher.after("voice-messages-plugin", discordVoice, "stopLocalAudioRecording", (thisObject, _, [callback]) => {
-                this.record.stop();
-                if (typeof callback === "function") callback();
-              });
-
-              document.addEventListener("keydown", (e) => {
-                if (e.key === BdApi.loadData(this.getName(), "keybind")) {
-                  BdApi.Vault.toggleMessagePlugin("VoiceMessages");
-                }
-              });
+            loadSettings() {
+              const savedKeybind = this.settings.keybind;
+              this.settings.keybind = savedKeybind || "F12";
+            }
+      
+            saveSettings() {
+              this.settings.keybind = this.settingsPanel.querySelector("#keybind-input").value;
+              BdApi.showToast(`Keybind saved to ${this.settings.keybind}`, { type: 'success' });
+            }
+      
+            addSettingsPanel() {
+              this.settingsPanel = new SettingPanel()
+                .setName("VoiceMessages Settings")
+                .addInput("Keybind", "Set the keybind for starting/stopping voice recording", {
+                  id: "keybind-input",
+                  value: this.settings.keybind,
+                  onChange: (value) => {
+                    this.settings.keybind = value;
+                  },
+                })
+                .addButton("Save Settings", "Save the current settings", {
+                  onClick: () => {
+                    this.saveSettings();
+                  },
+                })
+                .render();
             }
 
             onStop() {
-              BdApi.Patcher.unpatchAll("voice-messages-plugin");
+              document.removeEventListener("keydown", startFunc);
+              this.active = false;
             }
           };
         };
-
         return plugin(Plugin, Api);
       })(global.ZeresPluginLibrary.buildPlugin(config));
-
 })();
