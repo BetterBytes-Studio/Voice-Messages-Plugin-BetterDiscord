@@ -146,6 +146,12 @@ module.exports = (() => {
                   try {
                     require("fs").readFile(filePath, {}, (err, buf) => {
                       if (buf) {
+                        const timestamp = new Date()
+                          .toISOString()
+                          .replace(/[:.]/g, "-");
+                        const userName = BdApi.getUsername();
+                        const newFileName = `${userName}-${timestamp}.mp3`;
+
                         WebpackModules.getByProps(
                           "instantBatchUpload",
                           "upload"
@@ -155,24 +161,29 @@ module.exports = (() => {
                             new File(
                               [
                                 new Blob([buf], {
-                                  type: "audio/ogg; codecs=opus",
+                                  type: "audio/mp3",
                                 }),
                               ],
-                              "Voice Message.ogg",
-                              { type: "audio/ogg; codecs=opus" }
+                              newFileName,
+                              { type: "audio/mp3" }
                             ),
                           ],
                         });
-                      } else
-                        BdApi.showToast("Failed to finish recording", {
-                          type: "failure",
-                        });
+                      } else {
+                        BdApi.showToast(
+                          "🚨 Error: Recording could not be completed. Please retry!",
+                          {
+                            type: "failure",
+                          }
+                        );
+                      }
                     });
                   } catch (e) {
                     console.log(e);
                   }
                 }
                 console.log("STOPPED RECORDING");
+                BdApi.showToast("🛑 Recording stopped!", { type: "info" });
               });
             };
           }
@@ -192,6 +203,7 @@ module.exports = (() => {
             } else {
               record.stop();
               recording = true;
+              console.log("STOPPED RECORDING");
               showToast("🛑 Recording stopped!", {
                 type: "info",
               });
