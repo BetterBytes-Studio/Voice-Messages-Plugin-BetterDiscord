@@ -147,6 +147,11 @@ module.exports = (() => {
                   try {
                     require("fs").readFile(filePath, {}, (err, buf) => {
                       if (buf) {
+                        const timestamp = new Date()
+                          .toISOString()
+                          .replace(/[:.]/g, "-");
+                        const userName = BdApi.getUsername();
+
                         WebpackModules.getByProps(
                           "instantBatchUpload",
                           "upload"
@@ -159,15 +164,17 @@ module.exports = (() => {
                                   type: "audio/ogg; codecs=opus",
                                 }),
                               ],
-                              "Voice Message.ogg",
+                              `${userName}-${timestamp}.ogg`,
                               { type: "audio/ogg; codecs=opus" }
                             ),
                           ],
                         });
-                      } else
-                        BdApi.showToast("Failed to finish recording", {
-                          type: "failure",
-                        });
+                      } else {
+                        BdApi.showToast(
+                          "🚨 Error: Recording could not be completed. Please retry!",
+                          { type: "failure" }
+                        );
+                      }
                     });
                   } catch (e) {
                     console.log(e);
