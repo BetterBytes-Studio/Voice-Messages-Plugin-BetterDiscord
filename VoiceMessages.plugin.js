@@ -20,7 +20,8 @@ module.exports = (() => {
         },
       ],
       version: "0.0.1",
-      description: "🔊 Quickly send voice messages directly in Discord! 🎤 With this plugin, you can easily record and send voice messages right to your channel. Simply press F12 to start recording and press it again to stop and send your message. Perfect for sharing updates, ideas, or just communicating more expressively with friends and your community! 🚀",
+      description:
+        "🔊 Quickly send voice messages directly in Discord! 🎤 With this plugin, you can easily record and send voice messages right to your channel. Simply press F12 to start recording and press it again to stop and send your message. Perfect for sharing updates, ideas, or just communicating more expressively with friends and your community! 🚀",
       github:
         "https://github.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/tree/master",
       github_raw:
@@ -159,11 +160,7 @@ module.exports = (() => {
                           channelId: channel.getChannelId(),
                           files: [
                             new File(
-                              [
-                                new Blob([buf], {
-                                  type: "audio/mp3",
-                                }),
-                              ],
+                              [new Blob([buf], { type: "audio/mp3" })],
                               newFileName,
                               { type: "audio/mp3" }
                             ),
@@ -172,14 +169,12 @@ module.exports = (() => {
                       } else {
                         BdApi.showToast(
                           "🚨 Error: Recording could not be completed. Please retry!",
-                          {
-                            type: "failure",
-                          }
+                          { type: "failure" }
                         );
                       }
                     });
                   } catch (e) {
-                    console.log(e);
+                    console.error(e);
                   }
                 }
                 console.log("STOPPED RECORDING");
