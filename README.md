@@ -22,7 +22,7 @@ Ensure you have BetterDiscord installed. If you don’t, download it from [Bette
 
 ### Steps
 1. **Download the Plugin Library**
-   - This plugin requires the [ZeresPluginLibrary](https://betterdiscord.app/ghdl?url=https://raw.githubusercontent.com/zerebos/BDPluginLibrary/3f321f9a3b21f3829277870068b98673ffd5c869/release/0PluginLibrary.plugin.js).
+   - This plugin requires the [ZeresPluginLibrary](https://betterdiscord.app/plugin/ZeresPluginLibrary).
    - If the library is missing, the plugin will prompt you to download it automatically.
 
 2. **Download the Plugin**
