@@ -20,7 +20,7 @@ module.exports = (() => {
         },
       ],
       version: "0.0.1",
-      description: "Voice Messages",
+      description: "🔊 Quickly send voice messages directly in Discord! 🎤 With this plugin, you can easily record and send voice messages right to your channel. Simply press F12 to start recording and press it again to stop and send your message. Perfect for sharing updates, ideas, or just communicating more expressively with friends and your community! 🚀",
       github:
         "https://github.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/tree/master",
       github_raw:
