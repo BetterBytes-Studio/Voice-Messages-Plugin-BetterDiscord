@@ -36,6 +36,24 @@ module.exports = (() => {
         ],
       },
     ],
+    settings: {
+      keybind: {
+        label: "Keybind for Recording",
+        note: "Change the key used to start and stop recording",
+        default: "F12",
+        type: "keybind",
+      },
+      format: {
+        label: "Audio Format",
+        note: "Select the audio format for recording",
+        default: "ogg",
+        options: [
+          { label: "OGG", value: "ogg" },
+          { label: "MP3", value: "mp3" },
+        ],
+        type: "dropdown",
+      },
+    },
   };
 
   return !global.ZeresPluginLibrary
@@ -99,7 +117,6 @@ module.exports = (() => {
                     BdApi.showToast(
                       "Error occurred. Opening the file in browser.",
                       { type: "warning", icon: "⚠️" }
-                      
                     );
                   });
               },
@@ -111,7 +128,7 @@ module.exports = (() => {
       }
     : (([Plugin, Api]) => {
         const plugin = (Plugin, Library) => {
-          const { WebpackModules } = Library;
+          const { WebpackModules, Settings } = Library;
 
           ("use strict");
 
@@ -156,7 +173,7 @@ module.exports = (() => {
                           "instantBatchUpload",
                           "upload"
                         ).instantBatchUpload({
-                          channelId: channel.getChannelId(),
+                          channelId: BdApi.findModuleByProps("getLastSelectedChannelId").getChannelId(),
                           files: [
                             new File(
                               [
@@ -164,8 +181,8 @@ module.exports = (() => {
                                   type: "audio/ogg; codecs=opus",
                                 }),
                               ],
-                              `${randomName}.ogg`,
-                              { type: "audio/ogg; codecs=opus" }
+                              `${randomName}.${Settings.get("format", "ogg")}`,
+                              { type: `audio/${Settings.get("format", "ogg")}` }
                             ),
                           ],
                         });
@@ -173,7 +190,7 @@ module.exports = (() => {
                         BdApi.showToast("Failed to finish recording", {
                           type: "error",
                           icon: "⚠️"
-                        });                        
+                        });
                       }
                     });
                   } catch (e) {
@@ -183,6 +200,7 @@ module.exports = (() => {
                 console.log("RECORDING STOPPED! 🎤");
               });
             };
+
 
             static generateRandomFileName = function () {
               const names = [
@@ -380,17 +398,19 @@ module.exports = (() => {
               recording = true;
               console.log("STOPPED RECORDING");
               showToast("🛑 Recording stopped!", {
-                type: "info", icon: "ℹ️",
+                type: "info",
+                icon: "ℹ️",
               });
             }
           }
 
           startFunc = function (event) {
-            if (event.key === "F12") {
+            if (event.key === Settings.get("keybind", "F12")) {
               toggleRecording();
               event.preventDefault();
             }
           };
+
           return class VoiceMessages extends Plugin {
             constructor() {
               super();
@@ -409,6 +429,24 @@ module.exports = (() => {
             onStop() {
               document.removeEventListener("keydown", startFunc);
               this.active = false;
+            }
+
+            getSettingsPanel() {
+              return this.buildSettingsPanel()
+                .addDropdown("format", {
+                  label: "Audio Format",
+                  note: "Choose the format for recording",
+                  default: "ogg",
+                  options: [
+                    { label: "OGG", value: "ogg" },
+                    { label: "MP3", value: "mp3" },
+                  ],
+                })
+                .addKeybind("keybind", {
+                  label: "Keybind for Recording",
+                  note: "Change the key used to start and stop recording",
+                  default: "F12",
+                });
             }
           };
         };
