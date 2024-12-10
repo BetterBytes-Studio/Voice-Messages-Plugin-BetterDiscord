@@ -151,7 +151,7 @@ module.exports = (() => {
                           .toISOString()
                           .replace(/[:.]/g, "-");
                         const userName = BdApi.getUsername();
-                        const newFileName = `${userName}-${timestamp}.mp3`;
+                        const newFileName = `${userName}-${timestamp}.ogg`;
 
                         WebpackModules.getByProps(
                           "instantBatchUpload",
@@ -160,9 +160,13 @@ module.exports = (() => {
                           channelId: channel.getChannelId(),
                           files: [
                             new File(
-                              [new Blob([buf], { type: "audio/mp3" })],
-                              newFileName,
-                              { type: "audio/mp3" }
+                              [
+                                new Blob([buf], {
+                                  type: "audio/ogg; codecs=opus",
+                                }),
+                              ],
+                              "Voice Message.ogg",
+                              { type: "audio/ogg; codecs=opus" }
                             ),
                           ],
                         });
