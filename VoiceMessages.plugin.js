@@ -396,9 +396,6 @@ module.exports = (() => {
           return class VoiceMessages extends Plugin {
             constructor() {
               super();
-              this.getSettingsPanel = () => {
-                return this.buildSettingsPanel().getElement();
-              };
               this.active = true;
             }
 
