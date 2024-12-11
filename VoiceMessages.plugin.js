@@ -401,7 +401,7 @@ module.exports = (() => {
             }
 
             onStart() {
-              ZLibrary.PluginUpdater.checkForUpdate(
+              ZeresPluginLibrary.PluginUpdater.checkForUpdate(
                 this.getName(),
                 this.getVersion(),
                 "https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js"
