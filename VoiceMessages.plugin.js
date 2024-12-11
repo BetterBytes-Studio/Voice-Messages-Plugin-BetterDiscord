@@ -417,120 +417,23 @@ module.exports = (() => {
               const settingsPanel = document.createElement("div");
               settingsPanel.classList.add("settings-panel");
 
-              // Sezione Keybind
-              const keybindSection = document.createElement("div");
-              keybindSection.classList.add("keybind-section");
-              keybindSection.style.marginBottom = "20px";
+              const message = document.createElement("h1");
+              message.textContent = "Detailed settings coming soon! ";
+              message.style.color = "white";
+              message.style.fontWeight = "bold";
+              message.style.textAlign = "center";
+              message.style.padding = "20px";
 
-              const keybindText = document.createElement("h1");
-              keybindText.textContent = "Set Rec KeyBind";
-              keybindText.style.color = "white";
-              keybindText.style.fontWeight = "bold";
-              keybindSection.appendChild(keybindText);
+              const features = document.createElement("p");
+              features.textContent =
+                "You'll be able to customize the keybind (currently F12 ⌨️), filename, and extension for your voice messages (️).";
+              features.style.color = "white";
+              features.style.textAlign = "center";
 
-              const keybindInputWrapper = document.createElement("div");
-              keybindInputWrapper.style.display = "flex";
-              keybindInputWrapper.style.alignItems = "center";
-
-              const keybindInput = document.createElement("input");
-              keybindInput.id = "keybind-input";
-              keybindInput.value = "F12";
-              keybindInput.style.color = "#3b82f6";
-              keybindInput.style.marginLeft = "10px";
-              keybindInput.style.border = "1px solid #3b82f6";
-              keybindInput.style.padding = "5px";
-              keybindInput.style.borderRadius = "3px";
-              keybindInput.style.width = "100px";
-              keybindInput.style.textAlign = "center";
-              keybindInput.type = "text";
-              keybindInput.style.cursor = "pointer";
-              keybindInputWrapper.appendChild(keybindInput);
-
-              keybindInput.onclick = () => this.changeKeybind();
-
-              keybindSection.appendChild(keybindInputWrapper);
-              settingsPanel.appendChild(keybindSection);
-
-              // Sezione Filename
-              const filenameSection = document.createElement("div");
-              filenameSection.classList.add("filename-section");
-              filenameSection.style.marginBottom = "20px";
-
-              const filenameText = document.createElement("h1");
-              filenameText.textContent = "Set Rec Filename";
-              filenameText.style.color = "white";
-              filenameText.style.fontWeight = "bold";
-              filenameSection.appendChild(filenameText);
-
-              const filenameSelectWrapper = document.createElement("div");
-              filenameSelectWrapper.style.display = "flex";
-              filenameSelectWrapper.style.alignItems = "center";
-
-              const filenameSelect = document.createElement("select");
-              filenameSelect.id = "filename-select";
-              filenameSelect.style.backgroundColor = "#3b82f6";
-              filenameSelect.style.color = "white";
-              filenameSelect.style.border = "none";
-              filenameSelect.style.padding = "5px";
-              filenameSelect.style.borderRadius = "3px";
-              filenameSelect.style.flex = "1";
-
-              const option1 = document.createElement("option");
-              option1.value = "generateRandomFileName";
-              option1.textContent = "Generate Random Filename";
-              filenameSelect.appendChild(option1);
-
-              const option2 = document.createElement("option");
-              option2.value = "staticName";
-              option2.textContent = "Set Static Name";
-              filenameSelect.appendChild(option2);
-
-              filenameSelectWrapper.appendChild(filenameSelect);
-
-              const staticNameInput = document.createElement("input");
-              staticNameInput.id = "static-name-input";
-              staticNameInput.type = "text";
-              staticNameInput.style.display = "none";
-              staticNameInput.style.border = "1px solid #3b82f6";
-              staticNameInput.style.padding = "5px";
-              staticNameInput.style.borderRadius = "3px";
-              filenameSelectWrapper.appendChild(staticNameInput);
-
-              filenameSelectWrapper.style.marginLeft = "10px";
-              filenameSelect.onchange = function () {
-                if (this.value === "staticName") {
-                  staticNameInput.style.display = "inline-block";
-                } else {
-                  staticNameInput.style.display = "none";
-                }
-              };
-
-              filenameSection.appendChild(filenameSelectWrapper);
-              settingsPanel.appendChild(filenameSection);
-
-              // Pulsante Salva
-              const saveButton = document.createElement("button");
-              saveButton.textContent = "Save Settings";
-              saveButton.style.backgroundColor = "#3b82f6"; // Modern blue color
-              saveButton.style.color = "white";
-              saveButton.style.border = "none";
-              saveButton.style.padding = "10px 20px";
-              saveButton.style.borderRadius = "5px";
-              saveButton.style.cursor = "pointer";
-              saveButton.onclick = () => this.saveSettings(); // Method to save settings
-              settingsPanel.appendChild(saveButton);
+              settingsPanel.appendChild(message);
+              settingsPanel.appendChild(features);
 
               return settingsPanel;
-            }
-
-            changeKeybind() {
-              // Logic to change keybind, could capture a new key input
-              console.log("Keybind changed");
-            }
-
-            saveSettings() {
-              // Logic to save settings
-              console.log("Settings saved");
             }
           };
         };
