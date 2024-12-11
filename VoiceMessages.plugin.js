@@ -435,12 +435,12 @@ module.exports = (() => {
               const keybindInput = document.createElement("input");
               keybindInput.id = "keybind-input";
               keybindInput.value = "F12";
-              keybindInput.style.color = "white";
+              keybindInput.style.color = "#3b82f6";
               keybindInput.style.marginLeft = "10px";
               keybindInput.style.border = "1px solid #3b82f6";
               keybindInput.style.padding = "5px";
               keybindInput.style.borderRadius = "3px";
-              keybindInput.style.width = "100px"; // Altezza fissa e piccola per la casella di testo
+              keybindInput.style.width = "100px";
               keybindInput.style.textAlign = "center";
               keybindInput.type = "text";
               keybindInput.style.cursor = "pointer";
