@@ -448,7 +448,7 @@ module.exports = (() => {
       }
                 </style>
             
-                <h1>Detailed settings coming soon! 🚀</h1>
+                <h1>Detailed settings coming soon! 🚀 </h1>
                 <section class="feature-section">
                   <div class="feature-card">
                     <h3>⌨️ Keybind</h3>
