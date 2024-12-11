@@ -448,8 +448,8 @@ module.exports = (() => {
       }
                 </style>
             
-                <h1>Detailed settings coming soon! 🚀 </h1>
-                <section class="feature-section">
+               <h1 style="margin-bottom: 20px;">Detailed settings coming soon! 🚀</h1>
+                  <section class="feature-section">
                   <div class="feature-card">
                     <h3>⌨️ Keybind</h3>
                     <p>Currently set to (F12). Customize it for your preference.</p>
