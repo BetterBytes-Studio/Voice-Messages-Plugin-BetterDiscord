@@ -416,36 +416,41 @@ module.exports = (() => {
             getSettingsPanel() {
               const settingsPanel = document.createElement("div");
               settingsPanel.classList.add("settings-panel");
-
-              const contentWrapper = document.createElement("div");
-              contentWrapper.style.display = "flex";
-              contentWrapper.style.flexDirection = "column";
-              contentWrapper.style.alignItems = "center";
-              contentWrapper.style.justifyContent = "center";
-              contentWrapper.style.height = "100%";
-
-              const message = document.createElement("h1");
-              message.textContent = "Detailed settings coming soon! ";
-              message.style.color = "#FFF";
-              message.style.fontWeight = "bold";
-              message.style.fontSize = "1.2em";
-              message.style.marginBottom = "10px";
-
-              const features = document.createElement("p");
-              features.textContent = `
-              Customize your voice message experience:
-              * **Keybind:** Easily toggle recording with a custom key combination.
-              * **Filename:** Choose a specific filename or use a random one for each recording.
-              * **Extension:** Select the desired audio format for your voice messages.
-            `;
-              features.style.color = "#FFF";
-              features.style.textAlign = "center";
-              features.style.lineHeight = "1.2em";
-
-              contentWrapper.appendChild(message);
-              contentWrapper.appendChild(features);
-
-              settingsPanel.appendChild(contentWrapper);
+              settingsPanel.innerHTML = `
+                <style>
+                  .settings-panel {
+                    background-color: rgba(0, 0, 0, 0.7);
+                    color: #FFF;
+                    padding: 20px;
+                    border-radius: 5px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                  }
+            
+                  .feature-section {
+                    margin-top: 20px;
+                    text-align: center;
+                  }
+            
+                  .feature-section p {
+                    font-size: 1em;
+                    line-height: 1.5;
+                    margin-bottom: 10px;
+                  }
+            
+                  .feature-section p strong {
+                    font-weight: bold;
+                  }
+                </style>
+                <h1>Detailed settings coming soon!</h1>
+                <section class="feature-section">
+                  <p><strong>Keybind:** Easily toggle recording with a custom key combination.</p>
+                  <p><strong>Filename:** Choose a specific filename or use a random one for each recording.</p>
+                  <p><strong>Extension:** Select the desired audio format for your voice messages.</p>
+                </section>
+              `;
 
               return settingsPanel;
             }
