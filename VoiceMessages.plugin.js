@@ -409,58 +409,107 @@ module.exports = (() => {
             }
 
             getSettingsPanel() {
-              const settingsPanel = document.createElement('div');
-              settingsPanel.classList.add('settings-panel');
+              const settingsPanel = document.createElement("div");
+              settingsPanel.classList.add("settings-panel");
 
-              const keybindSection = document.createElement('div');
-              keybindSection.classList.add('keybind-section');
-          
-              const keybindText = document.createElement('h1');
-              keybindText.textContent = 'Set Rec KeyBind';
-              keybindText.style.color = 'white';
-              keybindText.style.fontWeight = 'bold';
+              // Keybind Section
+              const keybindSection = document.createElement("div");
+              keybindSection.classList.add("keybind-section");
+
+              const keybindText = document.createElement("h1");
+              keybindText.textContent = "Set Rec KeyBind";
+              keybindText.style.color = "white";
+              keybindText.style.fontWeight = "bold";
               keybindSection.appendChild(keybindText);
 
-              const keybindInput = document.createElement('span');
-              keybindInput.id = 'keybind-input';
-              keybindInput.textContent = 'F12';
-              keybindInput.style.color = 'white';
-              keybindInput.style.marginLeft = '10px';
+              const keybindInput = document.createElement("span");
+              keybindInput.id = "keybind-input";
+              keybindInput.textContent = "F12";
+              keybindInput.style.color = "white";
+              keybindInput.style.marginLeft = "10px";
+              keybindInput.style.cursor = "pointer";
+              keybindInput.style.border = "1px solid #3b82f6"; // border to indicate focus
+              keybindInput.style.padding = "2px 5px";
+              keybindInput.style.borderRadius = "3px";
+              keybindInput.onclick = () => this.changeKeybind(); // method to change keybind
               keybindSection.appendChild(keybindInput);
-          
+
               settingsPanel.appendChild(keybindSection);
-          
-              const filenameSection = document.createElement('div');
-              filenameSection.classList.add('filename-section');
-          
-              const filenameText = document.createElement('h1');
-              filenameText.textContent = 'Set Rec Filename';
-              filenameText.style.color = 'white';
-              filenameText.style.fontWeight = 'bold';
+
+              // Filename Section
+              const filenameSection = document.createElement("div");
+              filenameSection.classList.add("filename-section");
+
+              const filenameText = document.createElement("h1");
+              filenameText.textContent = "Set Rec Filename";
+              filenameText.style.color = "white";
+              filenameText.style.fontWeight = "bold";
               filenameSection.appendChild(filenameText);
-          
-              const filenameSelect = document.createElement('select');
-              filenameSelect.id = 'filename-select';
-              const option1 = document.createElement('option');
-              option1.value = 'generateRandomFileName';
-              option1.textContent = 'Generate Random Filename';
+
+              const filenameSelect = document.createElement("select");
+              filenameSelect.id = "filename-select";
+              filenameSelect.style.backgroundColor = "#3b82f6"; // Material-style color
+              filenameSelect.style.color = "white";
+              filenameSelect.style.border = "none";
+              filenameSelect.style.padding = "5px";
+              filenameSelect.style.borderRadius = "3px";
+
+              const option1 = document.createElement("option");
+              option1.value = "generateRandomFileName";
+              option1.textContent = "Generate Random Filename";
               filenameSelect.appendChild(option1);
-              const option2 = document.createElement('option');
-              option2.value = 'staticName';
-              option2.textContent = 'Set Static Name';
+
+              const option2 = document.createElement("option");
+              option2.value = "staticName";
+              option2.textContent = "Set Static Name";
               filenameSelect.appendChild(option2);
+
               filenameSection.appendChild(filenameSelect);
-          
-              const staticNameInput = document.createElement('input');
-              staticNameInput.id = 'static-name-input';
-              staticNameInput.type = 'text';
-              staticNameInput.style.display = 'none';
+
+              const staticNameInput = document.createElement("input");
+              staticNameInput.id = "static-name-input";
+              staticNameInput.type = "text";
+              staticNameInput.style.display = "none";
+              staticNameInput.style.border = "1px solid #3b82f6"; // border to indicate focus
+              staticNameInput.style.padding = "5px";
+              staticNameInput.style.borderRadius = "3px";
               filenameSection.appendChild(staticNameInput);
-          
+
+              filenameSelect.onchange = function () {
+                if (this.value === "staticName") {
+                  staticNameInput.style.display = "inline-block";
+                } else {
+                  staticNameInput.style.display = "none";
+                }
+              };
+
               settingsPanel.appendChild(filenameSection);
-          
+
+              // Save Button
+              const saveButton = document.createElement("button");
+              saveButton.textContent = "Save Settings";
+              saveButton.style.backgroundColor = "#3b82f6"; // modern blue color
+              saveButton.style.color = "white";
+              saveButton.style.border = "none";
+              saveButton.style.padding = "10px 20px";
+              saveButton.style.borderRadius = "5px";
+              saveButton.style.cursor = "pointer";
+              saveButton.onclick = () => this.saveSettings(); // method to save settings
+              settingsPanel.appendChild(saveButton);
+
               return settingsPanel;
-          }
+            }
+
+            // Example methods for changing keybind and saving settings
+            changeKeybind() {
+              // Logic to change the keybind, perhaps by capturing a new key input
+              console.log("Keybind changed");
+            }
+
+            saveSettings() {
+              // Logic to save settings
+              console.log("Settings saved");
+            }
 
             onStop() {
               document.removeEventListener("keydown", startFunc);
