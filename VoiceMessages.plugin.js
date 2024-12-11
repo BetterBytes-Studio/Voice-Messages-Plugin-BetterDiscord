@@ -417,21 +417,31 @@ module.exports = (() => {
               const settingsPanel = document.createElement("div");
               settingsPanel.classList.add("settings-panel");
 
+              const contentWrapper = document.createElement("div");
+              contentWrapper.style.display = "flex";
+              contentWrapper.style.flexDirection = "column";
+              contentWrapper.style.alignItems = "center";
+              contentWrapper.style.justifyContent = "center";
+              contentWrapper.style.height = "100%";
+
               const message = document.createElement("h1");
               message.textContent = "Detailed settings coming soon! ";
-              message.style.color = "white";
+              message.style.color = "#FFF";
               message.style.fontWeight = "bold";
-              message.style.textAlign = "center";
-              message.style.padding = "20px";
+              message.style.fontSize = "1.2em";
+              message.style.marginBottom = "10px";
 
               const features = document.createElement("p");
               features.textContent =
-                "You'll be able to customize the keybind (currently F12 ⌨️), filename, and extension for your voice messages (️).";
-              features.style.color = "white";
+                "Customize keybind (currently F12 ⌨️), filename, and extension for your voice messages ().";
+              features.style.color = "#FFF";
               features.style.textAlign = "center";
+              features.style.lineHeight = "1.2em";
 
-              settingsPanel.appendChild(message);
-              settingsPanel.appendChild(features);
+              contentWrapper.appendChild(message);
+              contentWrapper.appendChild(features);
+
+              settingsPanel.appendChild(contentWrapper);
 
               return settingsPanel;
             }
