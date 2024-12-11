@@ -432,8 +432,12 @@ module.exports = (() => {
               message.style.marginBottom = "10px";
 
               const features = document.createElement("p");
-              features.textContent =
-                "Customize keybind (currently F12 ⌨️), filename, and extension for your voice messages ().";
+              features.textContent = `
+              Customize your voice message experience:
+              * **Keybind:** Easily toggle recording with a custom key combination.
+              * **Filename:** Choose a specific filename or use a random one for each recording.
+              * **Extension:** Select the desired audio format for your voice messages.
+            `;
               features.style.color = "#FFF";
               features.style.textAlign = "center";
               features.style.lineHeight = "1.2em";
