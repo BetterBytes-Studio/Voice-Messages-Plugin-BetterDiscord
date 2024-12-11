@@ -415,6 +415,7 @@ module.exports = (() => {
               // Sezione Keybind
               const keybindSection = document.createElement("div");
               keybindSection.classList.add("keybind-section");
+              keybindSection.style.marginBottom = "20px";
 
               const keybindText = document.createElement("h1");
               keybindText.textContent = "Set Rec KeyBind";
@@ -434,8 +435,9 @@ module.exports = (() => {
               keybindInput.style.border = "1px solid #3b82f6"; // border to indicate focus
               keybindInput.style.padding = "5px";
               keybindInput.style.borderRadius = "3px";
+              keybindInput.style.width = "100px"; // altezza fissa e piccola per la casella di testo
+              keybindInput.style.textAlign = "center"; // allinea il testo al centro
               keybindInput.type = "text";
-              keybindInput.style.flex = "1";
               keybindInput.style.cursor = "pointer";
               keybindInputWrapper.appendChild(keybindInput);
 
@@ -448,6 +450,7 @@ module.exports = (() => {
               // Sezione Filename
               const filenameSection = document.createElement("div");
               filenameSection.classList.add("filename-section");
+              filenameSection.style.marginBottom = "20px";
 
               const filenameText = document.createElement("h1");
               filenameText.textContent = "Set Rec Filename";
