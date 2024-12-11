@@ -418,49 +418,49 @@ module.exports = (() => {
               settingsPanel.classList.add("settings-panel");
               settingsPanel.innerHTML = `
                 <style>
-                  .settings-panel {
-                    background-color: rgba(0, 0, 0, 0.7);
-                    color: #FFF;
-                    padding: 20px;
-                    border-radius: 10px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                  }
-            
-                  .feature-card {
-                    background-color: rgba(255, 255, 255, 0.1);
-                    border-radius: 5px;
-                    padding: 10px;
-                    margin-bottom: 10px;
-                    text-align: center;
-                  }
-            
-                  .feature-card h3 {
-                    font-weight: bold;
-                    margin-bottom: 5px;
-                  }
-            
-                  .feature-card p {
-                    font-size: 0.9em;
-                    line-height: 1.5;
-                  }
+                     .settings-panel {
+        background-color: rgba(0, 0, 0, 0.7);
+        color: #FFF;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .feature-card {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .feature-card h3 {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .feature-card p {
+        font-size: 0.9em;
+        line-height: 1.5;
+      }
                 </style>
             
                 <h1>Detailed settings coming soon! 🚀</h1>
                 <section class="feature-section">
                   <div class="feature-card">
                     <h3>⌨️ Keybind</h3>
-                    <p>Easily toggle recording with a custom key combination.</p>
+                    <p>Currently set to (F12). Customize it for your preference.</p>
                   </div>
                   <div class="feature-card">
                     <h3>📁 Filename</h3>
-                    <p>Choose a specific filename or use a random one for each recording.</p>
+                    <p>Currently using (random) filenames. Choose specific names or keep random.</p>
                   </div>
                   <div class="feature-card">
                     <h3>🎙️ Extension</h3>
-                    <p>Select the desired audio format for your voice messages.</p>
+                    <p>Currently using (.ogg) format. Select your preferred format.</p>
                   </div>
                 </section>
               `;
