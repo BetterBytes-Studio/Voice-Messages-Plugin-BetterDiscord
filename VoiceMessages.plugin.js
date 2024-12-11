@@ -393,6 +393,7 @@ module.exports = (() => {
               event.preventDefault();
             }
           };
+
           class VoiceMessages extends Plugin {
             constructor() {
               super();
