@@ -409,10 +409,58 @@ module.exports = (() => {
             }
 
             getSettingsPanel() {
-              const header = document.createElement("h1");
-              header.textContent = "VoiceMessage Settings";
-              return header;
-            }
+              const settingsPanel = document.createElement('div');
+              settingsPanel.classList.add('settings-panel');
+
+              const keybindSection = document.createElement('div');
+              keybindSection.classList.add('keybind-section');
+          
+              const keybindText = document.createElement('h1');
+              keybindText.textContent = 'Set Rec KeyBind';
+              keybindText.style.color = 'white';
+              keybindText.style.fontWeight = 'bold';
+              keybindSection.appendChild(keybindText);
+
+              const keybindInput = document.createElement('span');
+              keybindInput.id = 'keybind-input';
+              keybindInput.textContent = 'F12';
+              keybindInput.style.color = 'white';
+              keybindInput.style.marginLeft = '10px';
+              keybindSection.appendChild(keybindInput);
+          
+              settingsPanel.appendChild(keybindSection);
+          
+              const filenameSection = document.createElement('div');
+              filenameSection.classList.add('filename-section');
+          
+              const filenameText = document.createElement('h1');
+              filenameText.textContent = 'Set Rec Filename';
+              filenameText.style.color = 'white';
+              filenameText.style.fontWeight = 'bold';
+              filenameSection.appendChild(filenameText);
+          
+              const filenameSelect = document.createElement('select');
+              filenameSelect.id = 'filename-select';
+              const option1 = document.createElement('option');
+              option1.value = 'generateRandomFileName';
+              option1.textContent = 'Generate Random Filename';
+              filenameSelect.appendChild(option1);
+              const option2 = document.createElement('option');
+              option2.value = 'staticName';
+              option2.textContent = 'Set Static Name';
+              filenameSelect.appendChild(option2);
+              filenameSection.appendChild(filenameSelect);
+          
+              const staticNameInput = document.createElement('input');
+              staticNameInput.id = 'static-name-input';
+              staticNameInput.type = 'text';
+              staticNameInput.style.display = 'none';
+              filenameSection.appendChild(staticNameInput);
+          
+              settingsPanel.appendChild(filenameSection);
+          
+              return settingsPanel;
+          }
 
             onStop() {
               document.removeEventListener("keydown", startFunc);
