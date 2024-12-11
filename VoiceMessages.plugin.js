@@ -422,33 +422,46 @@ module.exports = (() => {
                     background-color: rgba(0, 0, 0, 0.7);
                     color: #FFF;
                     padding: 20px;
-                    border-radius: 5px;
+                    border-radius: 10px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
                   }
             
-                  .feature-section {
-                    margin-top: 20px;
+                  .feature-card {
+                    background-color: rgba(255, 255, 255, 0.1);
+                    border-radius: 5px;
+                    padding: 10px;
+                    margin-bottom: 10px;
                     text-align: center;
                   }
             
-                  .feature-section p {
-                    font-size: 1em;
-                    line-height: 1.5;
-                    margin-bottom: 10px;
+                  .feature-card h3 {
+                    font-weight: bold;
+                    margin-bottom: 5px;
                   }
             
-                  .feature-section p strong {
-                    font-weight: bold;
+                  .feature-card p {
+                    font-size: 0.9em;
+                    line-height: 1.5;
                   }
                 </style>
-                <h1>Detailed settings coming soon!</h1>
+            
+                <h1>Detailed settings coming soon! 🚀</h1>
                 <section class="feature-section">
-                  <p><strong>Keybind:** Easily toggle recording with a custom key combination.</p>
-                  <p><strong>Filename:** Choose a specific filename or use a random one for each recording.</p>
-                  <p><strong>Extension:** Select the desired audio format for your voice messages.</p>
+                  <div class="feature-card">
+                    <h3>⌨️ Keybind</h3>
+                    <p>Easily toggle recording with a custom key combination.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h3>📁 Filename</h3>
+                    <p>Choose a specific filename or use a random one for each recording.</p>
+                  </div>
+                  <div class="feature-card">
+                    <h3>🎙️ Extension</h3>
+                    <p>Select the desired audio format for your voice messages.</p>
+                  </div>
                 </section>
               `;
 
