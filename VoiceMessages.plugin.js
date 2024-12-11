@@ -396,6 +396,9 @@ module.exports = (() => {
           return class VoiceMessages extends Plugin {
             constructor() {
               super();
+              this.getSettingsPanel = () => {
+                return this.buildSettingsPanel().getElement();
+              };
               this.active = true;
             }
 
@@ -406,6 +409,12 @@ module.exports = (() => {
                 "https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js"
               );
               document.addEventListener("keydown", startFunc);
+            }
+
+            getSettingsPanel() {
+              const header = document.createElement("h1");
+              header.textContent = "VoiceMessage Settings";
+              return header;
             }
 
             onStop() {
