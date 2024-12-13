@@ -556,69 +556,84 @@ module.exports = (() => {
                     display: none;
                   }
           
-                  .switch {
-                    position: relative;
-                    display: inline-block;
-                    width: 40px;
-                    height: 20px;
-                  }
-          
-                  .switch input {
-                    opacity: 0;
-                    width: 0;
-                    height: 0;
-                  }
-          
-                  .slider {
-                    position: absolute;
-                    cursor: pointer;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: #ccc;
-                    transition: .4s cubic-bezier(0, 1, 0.5, 1);
-                    border-radius: 20px;
-                  }
-          
-                  .slider:before {
-                    position: absolute;
-                    content: "";
-                    height: 14px;
-                    width: 14px;
-                    left: 3px;
-                    bottom: 3px;
-                    background-color: white;
-                    transition: .4s cubic-bezier(0, 1, 0.5, 1);
-                    border-radius: 50%;
-                  }
-          
-                  input:checked + .slider {
-                    background-color: #3b82f6;
-                  }
-          
-                  input:checked + .slider:before {
-                    transform: translateX(20px);
-                  }
-          
-                  .slider.small {
-                    width: 40px;
-                    height: 20px;
-                  }
-          
-                  .slider.small:before {
-                    height: 14px;
-                    width: 14px;
-                  }
+                   @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: not-allowed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s cubic-bezier(0, 1, 0.5, 1);
+    border-radius: 20px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s cubic-bezier(0, 1, 0.5, 1);
+    border-radius: 50%;
+  }
+
+  .slider.small {
+    width: 40px;
+    height: 20px;
+  }
+
+  .slider.small:before {
+    height: 14px;
+    width: 14px;
+  }
+
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
                 </style>
                 <section class="feature-section">
-                  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
-                    <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
-                    <label class="switch" style="margin: 0;">
-                      <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
-                      <span class="slider small round"></span>
-                    </label>
-                  </div>
+                  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
+  <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+    <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
+    <label class="switch" style="margin: 0; opacity: 0.5; cursor: not-allowed;">
+      <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" disabled>
+      <span class="slider small round"></span>
+    </label>
+  </div>
+  <span style="color: crimson; font-size: 0.9em; animation: pulse 1.5s infinite;">This feature is under maintenance and will be added in a future update.</span>
+</div>
                   <div class="feature-card" id="keybindCard">
                     <h3>⌨️ Keybind</h3>
                     <p>Set your preferred keybind for starting/stopping recording:</p>
@@ -665,9 +680,6 @@ module.exports = (() => {
               const keybindCard = settingsPanel.querySelector("#keybindCard");
               const filenameCard = settingsPanel.querySelector("#filenameCard");
               const formatCard = settingsPanel.querySelector("#formatCard");
-              const realVoiceMessageToggle = settingsPanel.querySelector(
-                "#realVoiceMessageToggle"
-              );
 
               const savedSettings =
                 BdApi.getData("VoiceMessages", "settings") || {};
@@ -676,7 +688,6 @@ module.exports = (() => {
               staticNameRadio.checked = !savedSettings.useRandomFilename;
               randomNameRadio.checked = savedSettings.useRandomFilename;
               formatInput.value = savedSettings.format || "mp3";
-              realVoiceMessageToggle.checked = savedSettings.realVoiceMessage || false;
 
               const toggleFilenameInput = () => {
                 if (randomNameRadio.checked) {
@@ -686,26 +697,16 @@ module.exports = (() => {
                 }
               };
 
-              const toggleFeatureCards = () => {
-                if (realVoiceMessageToggle.checked) {
-                  keybindCard.classList.add("disabled");
-                  filenameCard.classList.add("disabled");
-                  formatCard.classList.add("disabled");
-                } else {
-                  keybindCard.classList.remove("disabled");
-                  filenameCard.classList.remove("disabled");
-                  formatCard.classList.remove("disabled");
-                }
-              };
-
               randomNameRadio.checked = true;
               staticNameRadio.checked = false;
-              realVoiceMessageToggle.checked = false;
 
               toggleFilenameInput();
               toggleFeatureCards();
 
-              realVoiceMessageToggle.addEventListener("change", toggleFeatureCards);
+              realVoiceMessageToggle.addEventListener(
+                "change",
+                toggleFeatureCards
+              );
               staticNameRadio.addEventListener("change", toggleFilenameInput);
               randomNameRadio.addEventListener("change", toggleFilenameInput);
 
@@ -714,8 +715,7 @@ module.exports = (() => {
                   keybind: keybindInput.value,
                   filename: filenameInput.value,
                   useRandomFilename: randomNameRadio.checked,
-                  format: formatInput.value,
-                  realVoiceMessage: realVoiceMessageToggle.checked,
+                  format: formatInput.value
                 };
 
                 BdApi.saveData("VoiceMessages", "settings", newSettings);
