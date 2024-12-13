@@ -100,17 +100,19 @@ module.exports = (() => {
 
     startRecording() {
       const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
-      const settings = BdApi.getData("VoiceMessages", "settings") || {};
-      const { echoCancellation = true, noiseCancellation = true } = settings;
 
       discordVoice.startLocalAudioRecording(
-        { echoCancellation, noiseCancellation },
+        {
+          echoCancellation: true,
+          noiseCancellation: true,
+        },
         (success) => {
           if (success) {
-            BdApi.showToast("🎙️ Recording started successfully!", { type: "success" });
-            this.recording = true;
+            console.log("STARTED RECORDING");
           } else {
-            BdApi.showToast("❌ Failed to start recording.", { type: "error" });
+            BdApi.showToast("Failed to start recording", {
+              type: "failure",
+            });
           }
         }
       );
@@ -118,277 +120,45 @@ module.exports = (() => {
 
     stopRecording() {
       const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
+      const channel = BdApi.findModuleByProps("getChannelId");
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
-      const { useRandomFilename = false, filename = "Recording", format = "mp3" } = settings;
+      const {
+        useRandomFilename = false,
+        filename = "Recording",
+        format = "mp3",
+      } = settings;
 
       discordVoice.stopLocalAudioRecording((filePath) => {
-        if (!filePath) {
-          BdApi.showToast("❌ Failed to stop recording: file path is undefined.", { type: "error" });
-          console.error("Recording might not have started or file path is missing.");
-          return;
-        }
+        if (filePath) {
+          try {
+            require("fs").readFile(filePath, {}, (err, buf) => {
+              if (buf) {
+                const filenameFinal = useRandomFilename
+                  ? this.generateRandomFileName()
+                  : filename;
 
-        try {
-          const buf = require("fs").readFileSync(filePath);
-          if (!buf) {
-            throw new Error("File buffer is empty or invalid.");
-          }
-
-          const channelId = this.getSelectedChannelId();
-          if (!channelId) {
-            throw new Error("Channel ID is undefined. Ensure a valid channel is selected.");
-          }
-
-          const filenameFinal = useRandomFilename ? this.generateRandomFileName() : filename;
-
-          this.uploadFile(channelId, buf, filenameFinal, format)
-            .then(() => {
-              BdApi.showToast("🎙️ Recording uploaded successfully!", { type: "success" });
-            })
-            .catch((uploadError) => {
-              console.error("Upload failed:", uploadError);
-              BdApi.showToast("❌ Upload failed: " + uploadError.message, { type: "error" });
+                WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload({
+                  channelId: channel.getChannelId(),
+                  files: [
+                    new File(
+                      [new Blob([buf], { type: `audio/${format}; codecs=opus` })],
+                      `${filenameFinal}.${format}`,
+                      { type: `audio/${format}; codecs=opus` }
+                    ),
+                  ],
+                });
+              } else {
+                BdApi.showToast("Failed to finish recording", {
+                  type: "failure",
+                });
+              }
             });
-        } catch (error) {
-          console.error("Error during stopRecording:", error);
-          BdApi.showToast("❌ Error occurred: " + error.message, { type: "error" });
-        } finally {
-          this.recording = false;
+          } catch (e) {
+            console.log(e);
+          }
         }
+        console.log("STOPPED RECORDING");
       });
-    }
-
-    getSelectedChannelId() {
-      const channelModule = BdApi.findModuleByProps("getSelectedChannelId");
-      if (channelModule && channelModule.getSelectedChannelId) {
-        return channelModule.getSelectedChannelId();
-      }
-
-      console.warn("getSelectedChannelId is unavailable.");
-      return null;
-    }
-
-    async uploadFile(channelId, buffer, filename, format) {
-      try {
-        const uploadModule = BdApi.findModuleByProps("instantBatchUpload", "upload");
-        if (!uploadModule) {
-          throw new Error("Upload module is unavailable.");
-        }
-
-        await uploadModule.instantBatchUpload({
-          channelId,
-          files: [
-            new File([new Blob([buffer], { type: `audio/${format}` })], `${filename}.${format}`),
-          ],
-        });
-      } catch (error) {
-        console.error("File upload failed:", error);
-        throw new Error("Failed to upload file: " + error.message);
-      }
-    }
-
-    static generateRandomFileName = function () {
-      const names = [
-        "PixelPurr😺",
-        "FuzzyFling🦄",
-        "ChirpChomp🐦",
-        "BlipBop🎉",
-        "DoodlePop🧚‍♀️",
-        "SizzleSnap🔥",
-        "GlimmerGlow🌟",
-        "SqueakZoom🐭",
-        "FizzFizz💧",
-        "BuzzBop💥",
-        "ZapZap⚡",
-        "TwinkleTee✨",
-        "SparkleSwoosh💫",
-        "TwangTee🎵",
-        "QuirkyQuip🤪",
-        "ChirpBing🐣",
-        "PopFizz🍾",
-        "DoodleBloop🌀",
-        "GlimmerPop💎",
-        "SqueakZap⚡️",
-        "TwistyTing🎠",
-        "SnappySparkle✨",
-        "WhisperWiz🌌",
-        "GlitzyGlimpse💫",
-        "FuzzyFizz🐼",
-        "BubblyBuzz💧",
-        "SlickSizzle🔥",
-        "QuirkyChirp🐦",
-        "DazzleGlow🌟",
-        "GlimmerSnap✨",
-        "WhisperTing🕊️",
-        "PopFizz🎈",
-        "SqueakySnap🐭",
-        "FizzFizz💦",
-        "BuzzBling💎",
-        "TwinklePop🌠",
-        "DoodleSwoosh🌌",
-        "SnapSparkle🌟",
-        "BlingBop💥",
-        "WhisperFizz✨",
-        "GlimmerTee🎵",
-        "SizzleBling🔥",
-        "PopBling💫",
-        "TwistySwoosh🎠",
-        "WhisperSparkle🌌",
-        "GlitzyChirp🐦",
-        "FizzBling💧",
-        "BuzzPop💥",
-        "SlickTing🔥",
-        "QuirkyBop🤪",
-        "ChirpSizzle🐦",
-        "TwistBling🎠",
-        "DoodlePop💎",
-        "GlimmerSwoosh✨",
-        "SnapBuzz💧",
-        "WhisperPop🌌",
-        "FizzTing💦",
-        "BuzzSnap💥",
-        "SizzleChirp🔥",
-        "TwistSwoosh🎠",
-        "PopFizz✨",
-        "GlimmerBop💎",
-        "ChirpTing🐦",
-        "WhisperSwoosh🌌",
-        "TwistPop🎠",
-        "DoodleSnap💫",
-        "SizzleFling🔥",
-        "BuzzBling💥",
-        "TwistBop🎠",
-        "GlimmerFizz✨",
-        "PopTing💦",
-        "SlickSnap🔥",
-        "BlingChirp💎",
-        "WhisperBling🌌",
-        "DoodleFling🌀",
-        "FizzBuzz💦",
-        "TwistBling🎠",
-        "PopSizzle💥",
-        "ChirpBling🐦",
-        "GlimmerSwoosh✨",
-        "FizzPop💧",
-        "TwistSnap🎠",
-        "BlingSizzle💫",
-        "WhisperFizz🌌",
-        "DoodleBop💫",
-        "FizzBop💦",
-        "GlimmerFling💎",
-        "SizzlePop🔥",
-        "TwistTee🎠",
-        "WhisperSnap🌌",
-        "PopFizz💥",
-        "BlingSwoosh💫",
-        "ChirpTee🐦",
-        "TwistBling🎠",
-        "DoodleSnap💫",
-        "GlitterBuzz💫",
-        "SqueakBling🐭",
-        "BuzzFizz💥",
-        "ChirpDazzle🐦",
-        "TwistFizz🎠",
-        "DoodleBling🌀",
-        "SparkleChirp💫",
-        "PopSnap💧",
-        "FizzChirp💦",
-        "BlingSwoosh🎠",
-        "SizzlePop💥",
-        "TwistBuzz🔥",
-        "DoodleFizz🌀",
-        "ChirpTing🐦",
-        "SlickBling🔥",
-        "WhisperPop🌌",
-        "BuzzSwoosh💥",
-        "GlimmerChirp💎",
-        "FizzSnap💦",
-        "BlingTwist🎠",
-        "DoodleBling💎",
-        "SizzleChirp🐦",
-        "BuzzFizz💦",
-        "PopSparkle💫",
-        "TwistFizz🎠",
-        "ChirpSizzle🐦",
-        "FizzBop💧",
-        "DoodleBling🌀",
-        "WhisperBuzz🌌",
-        "SizzleFizz🔥",
-        "BuzzChirp💥",
-        "TwistBop🎠",
-        "GlimmerFizz💎",
-        "SlickFizz🔥",
-        "PopTwist🎈",
-        "DoodleBuzz🌀",
-        "FizzSnap💦",
-        "ChirpPop🐦",
-        "TwistBling🎠",
-        "SizzleBuzz🔥",
-        "GlimmerBling💎",
-        "PopSizzle💥",
-        "WhisperFling🌌",
-        "BuzzFizz💥",
-        "DoodleChirp🌀",
-        "FizzPop💧",
-        "TwistSnap🎠",
-        "SizzleBling🔥",
-        "WhisperBop🌌",
-        "BuzzFizz💦",
-        "ChirpTwist🐦",
-        "DoodleFizz🌀",
-        "SizzleFizz🔥",
-        "FizzBop💧",
-        "GlimmerBling💎",
-        "BuzzSnap💥",
-        "PopChirp🎈",
-        "TwistSizzle🎠",
-        "WhisperSnap🌌",
-        "FizzBuzz💦",
-        "DoodleChirp💫",
-        "SizzleFizz🔥",
-        "ChirpBling🐦",
-        "PopFizz💥",
-        "BuzzFizz💦",
-        "FizzBop💧",
-        "TwistFizz🎠",
-        "GlimmerFizz💎",
-        "WhisperBuzz🌌",
-        "SizzleBling🔥",
-        "DoodleSnap🌀",
-        "FizzPop💧",
-        "ChirpFizz🐦",
-        "TwistBuzz🎠",
-        "SizzleBling🔥",
-        "PopSnap💥",
-        "FizzChirp💦",
-        "BuzzBling💥",
-        "DoodleFizz🌀",
-        "WhisperFizz🌌",
-      ];
-      return names[Math.floor(Math.random() * names.length)];
-    };
-    
-    
-    async uploadFile(channelId, buffer, filename, format) {
-      try {
-        const uploadModule = BdApi.findModuleByProps("instantBatchUpload", "upload");
-        if (!uploadModule) {
-          throw new Error("Upload module not found.");
-        }
-    
-        // Prepara i dati per il caricamento
-        await uploadModule.instantBatchUpload({
-          channelId,
-          files: [
-            new File([new Blob([buffer], { type: `audio/${format}` })], `${filename}.${format}`),
-          ],
-        });
-    
-        return { success: true };
-      } catch (error) {
-        console.error("Error during file upload:", error);
-        return { success: false, error: error.message || "Unknown error" };
-      }
     }
     
     static generateRandomFileName = function () {
