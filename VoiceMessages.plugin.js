@@ -125,53 +125,245 @@ module.exports = (() => {
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
       const { useRandomFilename = false, filename = "Recording", format = "mp3" } = settings;
     
-      discordVoice.stopLocalAudioRecording((filePath) => {
+      discordVoice.stopLocalAudioRecording(async (filePath) => {
         if (!filePath) {
           BdApi.showToast("❌ Failed to stop recording.", { type: "error" });
+          console.error("File path is undefined. Recording might not have started properly.");
           return;
         }
     
-        require("fs").readFile(filePath, {}, (err, buf) => {
-          if (err) {
-            console.error("Error reading recording file:", err);
-            BdApi.showToast("❌ Failed to read recording file.", { type: "error" });
-            return;
+        try {
+          const buf = require("fs").readFileSync(filePath);
+          if (!buf) {
+            throw new Error("Buffer is empty or undefined.");
           }
     
           const channelModule = BdApi.findModuleByProps("getLastSelectedChannelId");
           const channelId = channelModule?.getLastSelectedChannelId?.();
     
           if (!channelId) {
-            console.error("Channel ID is undefined. Cannot upload file.");
-            BdApi.showToast("❌ Failed to upload: Channel ID is undefined.", { type: "error" });
-            return;
+            throw new Error("Channel ID is undefined. Ensure you have an active channel selected.");
           }
     
-          const filenameFinal = useRandomFilename ? VoiceMessages.generateRandomFileName() : filename;
+          const filenameFinal = useRandomFilename ? this.generateRandomFileName() : filename;
     
-          try {
-            BdApi.findModuleByProps("instantBatchUpload", "upload").instantBatchUpload({
-              channelId,
-              files: [
-                new File(
-                  [new Blob([buf], { type: `audio/${format}; codecs=opus` })],
-                  `${filenameFinal}.${format}`
-                ),
-              ],
-            });
-    
-            BdApi.showToast("🎙️ Recording uploaded successfully!", {
-              type: "success",
-            });
-            this.recording = false;
-          } catch (uploadError) {
-            console.error("Error during file upload:", uploadError);
-            BdApi.showToast("❌ Upload failed.", { type: "error" });
+          const uploadResponse = await this.uploadFile(channelId, buf, filenameFinal, format);
+          if (uploadResponse.success) {
+            BdApi.showToast("🎙️ Recording uploaded successfully!", { type: "success" });
+          } else {
+            throw new Error("Upload failed: " + uploadResponse.error);
           }
-        });
+    
+        } catch (error) {
+          console.error("Error during stopRecording:", error);
+          BdApi.showToast("❌ Recording upload failed.", { type: "error" });
+        } finally {
+          this.recording = false;
+        }
       });
     }
     
+    async uploadFile(channelId, buffer, filename, format) {
+      try {
+        const uploadModule = BdApi.findModuleByProps("instantBatchUpload", "upload");
+        if (!uploadModule) {
+          throw new Error("Upload module not found.");
+        }
+
+        await uploadModule.instantBatchUpload({
+          channelId,
+          files: [
+            new File([new Blob([buffer], { type: `audio/${format}` })], `${filename}.${format}`),
+          ],
+        });
+    
+        return { success: true };
+      } catch (error) {
+        console.error("Error during file upload:", error);
+        return { success: false, error: error.message || "Unknown error" };
+      }
+    }
+
+    static generateRandomFileName = function () {
+      const names = [
+        "PixelPurr😺",
+        "FuzzyFling🦄",
+        "ChirpChomp🐦",
+        "BlipBop🎉",
+        "DoodlePop🧚‍♀️",
+        "SizzleSnap🔥",
+        "GlimmerGlow🌟",
+        "SqueakZoom🐭",
+        "FizzFizz💧",
+        "BuzzBop💥",
+        "ZapZap⚡",
+        "TwinkleTee✨",
+        "SparkleSwoosh💫",
+        "TwangTee🎵",
+        "QuirkyQuip🤪",
+        "ChirpBing🐣",
+        "PopFizz🍾",
+        "DoodleBloop🌀",
+        "GlimmerPop💎",
+        "SqueakZap⚡️",
+        "TwistyTing🎠",
+        "SnappySparkle✨",
+        "WhisperWiz🌌",
+        "GlitzyGlimpse💫",
+        "FuzzyFizz🐼",
+        "BubblyBuzz💧",
+        "SlickSizzle🔥",
+        "QuirkyChirp🐦",
+        "DazzleGlow🌟",
+        "GlimmerSnap✨",
+        "WhisperTing🕊️",
+        "PopFizz🎈",
+        "SqueakySnap🐭",
+        "FizzFizz💦",
+        "BuzzBling💎",
+        "TwinklePop🌠",
+        "DoodleSwoosh🌌",
+        "SnapSparkle🌟",
+        "BlingBop💥",
+        "WhisperFizz✨",
+        "GlimmerTee🎵",
+        "SizzleBling🔥",
+        "PopBling💫",
+        "TwistySwoosh🎠",
+        "WhisperSparkle🌌",
+        "GlitzyChirp🐦",
+        "FizzBling💧",
+        "BuzzPop💥",
+        "SlickTing🔥",
+        "QuirkyBop🤪",
+        "ChirpSizzle🐦",
+        "TwistBling🎠",
+        "DoodlePop💎",
+        "GlimmerSwoosh✨",
+        "SnapBuzz💧",
+        "WhisperPop🌌",
+        "FizzTing💦",
+        "BuzzSnap💥",
+        "SizzleChirp🔥",
+        "TwistSwoosh🎠",
+        "PopFizz✨",
+        "GlimmerBop💎",
+        "ChirpTing🐦",
+        "WhisperSwoosh🌌",
+        "TwistPop🎠",
+        "DoodleSnap💫",
+        "SizzleFling🔥",
+        "BuzzBling💥",
+        "TwistBop🎠",
+        "GlimmerFizz✨",
+        "PopTing💦",
+        "SlickSnap🔥",
+        "BlingChirp💎",
+        "WhisperBling🌌",
+        "DoodleFling🌀",
+        "FizzBuzz💦",
+        "TwistBling🎠",
+        "PopSizzle💥",
+        "ChirpBling🐦",
+        "GlimmerSwoosh✨",
+        "FizzPop💧",
+        "TwistSnap🎠",
+        "BlingSizzle💫",
+        "WhisperFizz🌌",
+        "DoodleBop💫",
+        "FizzBop💦",
+        "GlimmerFling💎",
+        "SizzlePop🔥",
+        "TwistTee🎠",
+        "WhisperSnap🌌",
+        "PopFizz💥",
+        "BlingSwoosh💫",
+        "ChirpTee🐦",
+        "TwistBling🎠",
+        "DoodleSnap💫",
+        "GlitterBuzz💫",
+        "SqueakBling🐭",
+        "BuzzFizz💥",
+        "ChirpDazzle🐦",
+        "TwistFizz🎠",
+        "DoodleBling🌀",
+        "SparkleChirp💫",
+        "PopSnap💧",
+        "FizzChirp💦",
+        "BlingSwoosh🎠",
+        "SizzlePop💥",
+        "TwistBuzz🔥",
+        "DoodleFizz🌀",
+        "ChirpTing🐦",
+        "SlickBling🔥",
+        "WhisperPop🌌",
+        "BuzzSwoosh💥",
+        "GlimmerChirp💎",
+        "FizzSnap💦",
+        "BlingTwist🎠",
+        "DoodleBling💎",
+        "SizzleChirp🐦",
+        "BuzzFizz💦",
+        "PopSparkle💫",
+        "TwistFizz🎠",
+        "ChirpSizzle🐦",
+        "FizzBop💧",
+        "DoodleBling🌀",
+        "WhisperBuzz🌌",
+        "SizzleFizz🔥",
+        "BuzzChirp💥",
+        "TwistBop🎠",
+        "GlimmerFizz💎",
+        "SlickFizz🔥",
+        "PopTwist🎈",
+        "DoodleBuzz🌀",
+        "FizzSnap💦",
+        "ChirpPop🐦",
+        "TwistBling🎠",
+        "SizzleBuzz🔥",
+        "GlimmerBling💎",
+        "PopSizzle💥",
+        "WhisperFling🌌",
+        "BuzzFizz💥",
+        "DoodleChirp🌀",
+        "FizzPop💧",
+        "TwistSnap🎠",
+        "SizzleBling🔥",
+        "WhisperBop🌌",
+        "BuzzFizz💦",
+        "ChirpTwist🐦",
+        "DoodleFizz🌀",
+        "SizzleFizz🔥",
+        "FizzBop💧",
+        "GlimmerBling💎",
+        "BuzzSnap💥",
+        "PopChirp🎈",
+        "TwistSizzle🎠",
+        "WhisperSnap🌌",
+        "FizzBuzz💦",
+        "DoodleChirp💫",
+        "SizzleFizz🔥",
+        "ChirpBling🐦",
+        "PopFizz💥",
+        "BuzzFizz💦",
+        "FizzBop💧",
+        "TwistFizz🎠",
+        "GlimmerFizz💎",
+        "WhisperBuzz🌌",
+        "SizzleBling🔥",
+        "DoodleSnap🌀",
+        "FizzPop💧",
+        "ChirpFizz🐦",
+        "TwistBuzz🎠",
+        "SizzleBling🔥",
+        "PopSnap💥",
+        "FizzChirp💦",
+        "BuzzBling💥",
+        "DoodleFizz🌀",
+        "WhisperFizz🌌",
+      ];
+      return names[Math.floor(Math.random() * names.length)];
+    };
 
     getSettingsPanel() {
       const settingsPanel = document.createElement("div");
