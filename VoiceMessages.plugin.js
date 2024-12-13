@@ -463,6 +463,11 @@ module.exports = (() => {
                     transform: translateY(-5px);
                   }
 
+                  .feature-card.disabled {
+                    filter: blur(3px);
+                    pointer-events: none;
+                  }
+
                   .feature-card h3 {
                     font-size: 1.2em;
                     font-weight: bold;
@@ -515,61 +520,69 @@ module.exports = (() => {
                   }
 
                   .custom-radio {
-    appearance: none;
-    background-color: #1E1E1E;
-    margin: 0;
-    font: inherit;
-    width: 1.5em;
-    height: 1.5em;
-    border: 2px solid #333;
-    border-radius: 0.5em;
-    display: grid;
-    place-content: center;
-    cursor: pointer;
-    outline: none;
-    transition: border 0.3s, background-color 0.3s, transform 0.2s ease-in-out;
-    position: relative;
-  }
+                    appearance: none;
+                    background-color: #1E1E1E;
+                    margin: 0;
+                    font: inherit;
+                    width: 1.5em;
+                    height: 1.5em;
+                    border: 2px solid #333;
+                    border-radius: 0.5em;
+                    display: grid;
+                    place-content: center;
+                    cursor: pointer;
+                    outline: none;
+                    transition: border 0.3s, background-color 0.3s, transform 0.2s ease-in-out;
+                    position: relative;
+                  }
 
-  .custom-radio::before {
-    content: '';
-    width: 0.8em;
-    height: 0.8em;
-    background-color: transparent;
-    clip-path: polygon(14% 44%, 0% 63%, 50% 100%, 100% 0%, 85% 0%, 43% 78%);
-    transition: background-color 0.3s, transform 0.2s ease-in-out;
-    transform: scale(0);
-  }
+                  .custom-radio::before {
+                    content: '';
+                    width: 0.8em;
+                    height: 0.8em;
+                    background-color: transparent;
+                    clip-path: polygon(14% 44%, 0% 63%, 50% 100%, 100% 0%, 85% 0%, 43% 78%);
+                    transition: background-color 0.3s, transform 0.2s ease-in-out;
+                    transform: scale(0);
+                  }
 
-  .custom-radio:checked {
-    border: 2px solid #3b82f6;
-    background-color: #3b82f6;
-    transform: scale(1.1);
-  }
+                  .custom-radio:checked {
+                    border: 2px solid #3b82f6;
+                    background-color: #3b82f6;
+                    transform: scale(1.1);
+                  }
 
-  .custom-radio:checked::before {
-    background-color: #ffffff;
-    transform: scale(1);
-  }
+                  .custom-radio:checked::before {
+                    background-color: #ffffff;
+                    transform: scale(1);
+                  }
 
-  .custom-radio:focus {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-  }
+                  .custom-radio:focus {
+                    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+                  }
 
-  .custom-radio-label {
-    margin-left: 10px;
-    color: #B0B0B0;
-    font-size: 1em;
-  }
+                  .custom-radio-label {
+                    margin-left: 10px;
+                    color: #B0B0B0;
+                    font-size: 1em;
+                  }
 
                 </style>
                 <section class="feature-section">
                   <div class="feature-card">
+                    <h3>🚀 Send as Real Voice Message</h3>
+                    <p>Enable this option to send your recordings as real voice messages:</p>
+                    <label class="custom-switch">
+                      <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
+                      <span class="custom-switch-slider"></span>
+                    </label>
+                  </div>
+                  <div class="feature-card" id="keybindCard">
                     <h3>⌨️ Keybind</h3>
                     <p>Set your preferred keybind for starting/stopping recording:</p>
                     <input type="text" class="settings-input" id="keybindInput" placeholder="Enter keybind (e.g., F12)">
                   </div>
-                  <div class="feature-card">
+                  <div class="feature-card" id="filenameCard">
                     <h3>📁 Filename Format</h3>
                     <p>Choose between static or random filename:</p>
                     <div style="margin-top: 10px; display: flex; align-items: center;">
@@ -580,7 +593,7 @@ module.exports = (() => {
                     </div>
                     <input type="text" class="settings-input hidden" id="filenameInput" placeholder="Enter filename">
                   </div>
-                  <div class="feature-card">
+                  <div class="feature-card" id="formatCard">
                     <h3>🎙️ Audio Format</h3>
                     <p>Select the desired audio format:</p>
                     <select class="settings-input" id="formatInput">
@@ -602,6 +615,10 @@ module.exports = (() => {
                 settingsPanel.querySelector("#randomName");
               const formatInput = settingsPanel.querySelector("#formatInput");
               const saveButton = settingsPanel.querySelector("#saveSettings");
+              const realVoiceMessageToggle = settingsPanel.querySelector("#realVoiceMessageToggle");
+              const keybindCard = settingsPanel.querySelector("#keybindCard");
+              const filenameCard = settingsPanel.querySelector("#filenameCard");
+              const formatCard = settingsPanel.querySelector("#formatCard");
 
               const savedSettings =
                 BdApi.getData("VoiceMessages", "settings") || {};
@@ -610,6 +627,21 @@ module.exports = (() => {
               staticNameRadio.checked = !savedSettings.useRandomFilename;
               randomNameRadio.checked = savedSettings.useRandomFilename;
               formatInput.value = savedSettings.format || "ogg";
+              realVoiceMessageToggle.checked = savedSettings.realVoiceMessage || false;
+
+              const toggleFeatureCards = () => {
+                if (realVoiceMessageToggle.checked) {
+                  keybindCard.classList.add("disabled");
+                  filenameCard.classList.add("disabled");
+                  formatCard.classList.add("disabled");
+                } else {
+                  keybindCard.classList.remove("disabled");
+                  filenameCard.classList.remove("disabled");
+                  formatCard.classList.remove("disabled");
+                }
+              };
+
+              realVoiceMessageToggle.addEventListener("change", toggleFeatureCards);
 
               const toggleFilenameInput = () => {
                 if (randomNameRadio.checked) {
@@ -623,6 +655,7 @@ module.exports = (() => {
               staticNameRadio.checked = false;
 
               toggleFilenameInput();
+              toggleFeatureCards();
 
               staticNameRadio.addEventListener("change", toggleFilenameInput);
               randomNameRadio.addEventListener("change", toggleFilenameInput);
@@ -633,6 +666,7 @@ module.exports = (() => {
                   filename: filenameInput.value,
                   useRandomFilename: randomNameRadio.checked,
                   format: formatInput.value,
+                  realVoiceMessage: realVoiceMessageToggle.checked,
                 };
 
                 BdApi.saveData("VoiceMessages", "settings", newSettings);
@@ -644,6 +678,7 @@ module.exports = (() => {
 
               return settingsPanel;
             }
+
 
             static generateRandomFileName = function () {
               const names = [
