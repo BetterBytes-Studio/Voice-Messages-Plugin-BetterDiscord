@@ -628,7 +628,7 @@ module.exports = (() => {
   <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
     <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
     <label class="switch" style="margin: 0; opacity: 0.5; cursor: not-allowed;">
-      <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" disabled>
+      <input type="checkbox" class="settings-input" disabled>
       <span class="slider small round"></span>
     </label>
   </div>
@@ -703,10 +703,6 @@ module.exports = (() => {
               toggleFilenameInput();
               toggleFeatureCards();
 
-              realVoiceMessageToggle.addEventListener(
-                "change",
-                toggleFeatureCards
-              );
               staticNameRadio.addEventListener("change", toggleFilenameInput);
               randomNameRadio.addEventListener("change", toggleFilenameInput);
 
