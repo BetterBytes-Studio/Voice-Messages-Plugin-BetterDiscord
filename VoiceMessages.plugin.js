@@ -155,86 +155,83 @@ module.exports = (() => {
               const useRandomFilename = settings.useRandomFilename || false;
               const staticFilename = settings.filename || "Recording";
               const format = settings.format || "mp3";
-            
+          
               discordVoice.stopLocalAudioRecording((filePath) => {
-                if (!filePath) {
-                  BdApi.showToast("❌ Failed to stop recording.", {
-                    type: "error",
-                  });
-                  return;
-                }
-            
-                try {
-                  require("fs").readFile(filePath, {}, (err, buf) => {
-                    if (err) {
-                      console.error("Error reading recording file:", err);
-                      BdApi.showToast("❌ Failed to process recording file.", {
-                        type: "error",
-                      });
+                  if (!filePath) {
+                      BdApi.showToast("❌ Failed to stop recording.", { type: "error" });
                       return;
-                    }
-            
-                    if (buf) {
-                      const filename = useRandomFilename
-                        ? this.generateRandomFileName()
-                        : staticFilename;
-            
-                      const channelId = channel.getChannelId();
-                      const guildId = channel.getGuildId?.();
-            
-                      const replyContextModule = WebpackModules.getByProps("getReplyContext");
-                      const replyContext = replyContextModule?.getReply(channelId);
-                      const replyMessageId = replyContext?.message?.id;
-            
-                      const uploadOptions = {
-                        channelId: channelId,
-                        files: [
-                          new File(
-                            [
-                              new Blob([buf], {
-                                type: `audio/${format}; codecs=opus`,
-                              }),
-                            ],
-                            `${filename}.${format}`,
-                            { type: `audio/${format}; codecs=opus` }
-                          ),
-                        ],
-                      };
-            
-                      if (replyMessageId) {
-                        uploadOptions.messageReference = {
-                          channel_id: channelId,
-                          message_id: replyMessageId,
-                          guild_id: guildId || null,
-                        };
-            
-                        console.log("Reply Mode Detected:", uploadOptions.messageReference);
-                      } else {
-                        console.log("No reply mode detected. Uploading as a standalone message.");
-                      }
-            
-                      WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload(uploadOptions);
-            
-                      BdApi.showToast("✅ Recording uploaded successfully!", {
-                        type: "success",
+                  }
+          
+                  try {
+                      require("fs").readFile(filePath, {}, (err, buf) => {
+                          if (err) {
+                              console.error("Error reading recording file:", err);
+                              BdApi.showToast("❌ Failed to read recording file.", {
+                                  type: "error",
+                              });
+                              return;
+                          }
+          
+                          if (buf) {
+                              const filename = useRandomFilename
+                                  ? this.generateRandomFileName()
+                                  : staticFilename;
+          
+                              const channelId = channel.getChannelId();
+                              const guildId = channel.getGuildId?.();
+                              const replyMessageId = BdApi.findModuleByProps("getChannelMessage")
+                                  ?.getReplyId?.(channelId);
+          
+                              const uploadOptions = {
+                                  channelId: channelId,
+                                  files: [
+                                      new File(
+                                          [
+                                              new Blob([buf], {
+                                                  type: `audio/${format}; codecs=opus`,
+                                              }),
+                                          ],
+                                          `${filename}.${format}`,
+                                          { type: `audio/${format}; codecs=opus` }
+                                      ),
+                                  ],
+                              };
+          
+                              if (replyMessageId) {
+                                  uploadOptions.messageReference = {
+                                      channel_id: channelId,
+                                      message_id: replyMessageId,
+                                      guild_id: guildId || null,
+                                  };
+                                  console.log("Reply mode detected. Attaching message reference.");
+                              } else {
+                                  console.log("No reply mode detected. Uploading as a standalone message.");
+                              }
+          
+                              WebpackModules.getByProps(
+                                  "instantBatchUpload",
+                                  "upload"
+                              ).instantBatchUpload(uploadOptions);
+          
+                              BdApi.showToast("🎙️ Recording uploaded successfully!", {
+                                  type: "success",
+                                  icon: "✔️",
+                              });
+                          } else {
+                              BdApi.showToast("❌ Failed to process recording file.", {
+                                  type: "error",
+                              });
+                          }
                       });
-            
-                      console.log("Recording uploaded successfully!");
-                    } else {
-                      BdApi.showToast("❌ Failed to process recording file.", {
-                        type: "error",
+                  } catch (error) {
+                      console.error("Error uploading recording file:", error);
+                      BdApi.showToast("❌ Failed to upload recording file.", {
+                          type: "error",
                       });
-                    }
-                  });
-                } catch (error) {
-                  console.error("Error uploading recording file:", error);
-                  BdApi.showToast("❌ Failed to upload recording file.", {
-                    type: "error",
-                  });
-                }
+                  }
               });
-            };
-            
+          };
+          
 
             static generateRandomFileName = function () {
               const names = [
