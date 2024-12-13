@@ -138,8 +138,8 @@ module.exports = (() => {
             throw new Error("Buffer is empty or undefined.");
           }
     
-          const channelModule = BdApi.findModuleByProps("getLastSelectedChannelId");
-          const channelId = channelModule?.getLastSelectedChannelId?.();
+          const channelModule = BdApi.findModuleByProps("getChannelId", "getGuildId");
+          const channelId = channelModule?.getChannelId?.() || BdApi.findModuleByProps("getLastSelectedChannelId")?.getLastSelectedChannelId?.();
     
           if (!channelId) {
             throw new Error("Channel ID is undefined. Ensure you have an active channel selected.");
@@ -169,7 +169,8 @@ module.exports = (() => {
         if (!uploadModule) {
           throw new Error("Upload module not found.");
         }
-
+    
+        // Prepara i dati per il caricamento
         await uploadModule.instantBatchUpload({
           channelId,
           files: [
@@ -183,7 +184,7 @@ module.exports = (() => {
         return { success: false, error: error.message || "Unknown error" };
       }
     }
-
+    
     static generateRandomFileName = function () {
       const names = [
         "PixelPurr😺",
@@ -364,6 +365,7 @@ module.exports = (() => {
       ];
       return names[Math.floor(Math.random() * names.length)];
     };
+    
 
     getSettingsPanel() {
       const settingsPanel = document.createElement("div");
