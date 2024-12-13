@@ -621,7 +621,7 @@ module.exports = (() => {
     border-radius: 50%;
   }
 
-  .custom-radio {
+ .custom-radio {
   appearance: none;
   background-color: #1E1E1E;
   margin: 0;
@@ -634,7 +634,7 @@ module.exports = (() => {
   place-content: center;
   cursor: pointer;
   outline: none;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease-in-out;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease-in-out, box-shadow 0.3s ease;
   position: relative;
 }
 
@@ -646,19 +646,21 @@ module.exports = (() => {
 .custom-radio:checked {
   background-color: #3b82f6;
   border-color: #3b82f6;
+  box-shadow: 0 0 8px #3b82f6;
 }
 
 .custom-radio::before {
   content: '';
-  width: 10px;
-  height: 10px;
-  background-color: #ffffff;
-  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  background-color: transparent;
+  clip-path: polygon(14% 44%, 0% 63%, 50% 100%, 100% 0%, 85% 0%, 43% 78%);
   transform: scale(0);
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
 .custom-radio:checked::before {
+  background-color: #ffffff;
   transform: scale(1);
 }
 
@@ -673,6 +675,7 @@ module.exports = (() => {
 .custom-radio-label:hover {
   color: #3b82f6;
 }
+
                 </style>
                 <section class="feature-section">
                   <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
