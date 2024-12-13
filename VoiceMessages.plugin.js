@@ -124,40 +124,54 @@ module.exports = (() => {
       const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
       const { useRandomFilename = false, filename = "Recording", format = "mp3" } = settings;
-
+    
       discordVoice.stopLocalAudioRecording((filePath) => {
         if (!filePath) {
           BdApi.showToast("❌ Failed to stop recording.", { type: "error" });
           return;
         }
-
+    
         require("fs").readFile(filePath, {}, (err, buf) => {
           if (err) {
             console.error("Error reading recording file:", err);
             BdApi.showToast("❌ Failed to read recording file.", { type: "error" });
             return;
           }
-
-          const channelId = BdApi.findModuleByProps("getLastSelectedChannelId").getLastSelectedChannelId();
+    
+          const channelModule = BdApi.findModuleByProps("getLastSelectedChannelId");
+          const channelId = channelModule?.getLastSelectedChannelId?.();
+    
+          if (!channelId) {
+            console.error("Channel ID is undefined. Cannot upload file.");
+            BdApi.showToast("❌ Failed to upload: Channel ID is undefined.", { type: "error" });
+            return;
+          }
+    
           const filenameFinal = useRandomFilename ? VoiceMessages.generateRandomFileName() : filename;
-
-          BdApi.findModuleByProps("instantBatchUpload", "upload").instantBatchUpload({
-            channelId,
-            files: [
-              new File([
-                new Blob([buf], { type: `audio/${format}; codecs=opus` }),
-              ], `${filenameFinal}.${format}`),
-            ],
-          });
-
-          BdApi.showToast("🎙️ Recording uploaded successfully!", {
-            type: "success",
-          });
-          this.recording = false;
+    
+          try {
+            BdApi.findModuleByProps("instantBatchUpload", "upload").instantBatchUpload({
+              channelId,
+              files: [
+                new File(
+                  [new Blob([buf], { type: `audio/${format}; codecs=opus` })],
+                  `${filenameFinal}.${format}`
+                ),
+              ],
+            });
+    
+            BdApi.showToast("🎙️ Recording uploaded successfully!", {
+              type: "success",
+            });
+            this.recording = false;
+          } catch (uploadError) {
+            console.error("Error during file upload:", uploadError);
+            BdApi.showToast("❌ Upload failed.", { type: "error" });
+          }
         });
       });
     }
-
+    
 
     getSettingsPanel() {
       const settingsPanel = document.createElement("div");
