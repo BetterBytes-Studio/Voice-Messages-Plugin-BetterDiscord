@@ -172,10 +172,12 @@ module.exports = (() => {
                         : staticFilename;
                 
                       const messageStore = WebpackModules.getByProps("getChannelMessage");
-                      const replyInfo = messageStore?.getMessage(channel.getChannelId(), replyMessageId);
+                      const channelId = channel.getChannelId();
+                      const guildId = channel.getGuildId?.();
+                      const replyMessage = messageStore?.getMessage(channelId, replyMessageId);
                 
                       const uploadOptions = {
-                        channelId: channel.getChannelId(),
+                        channelId: channelId,
                         files: [
                           new File(
                             [
@@ -189,11 +191,11 @@ module.exports = (() => {
                         ],
                       };
                 
-                      if (replyInfo) {
+                      if (replyMessage && replyMessageId) {
                         uploadOptions.messageReference = {
-                          channel_id: channel.getChannelId(),
-                          guild_id: channel.getGuildId?.(),
+                          channel_id: channelId,
                           message_id: replyMessageId,
+                          guild_id: guildId || null,
                         };
                       }
                 
