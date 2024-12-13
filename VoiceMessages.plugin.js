@@ -567,50 +567,57 @@ module.exports = (() => {
                     font-size: 1em;
                   }
 
-                  .custom-switch {
+                     .custom-switch {
             display: flex;
             align-items: center;
+            gap: 10px;
         }
 
         .custom-switch input {
-            position: relative;
             appearance: none;
-            width: 40px;
-            height: 20px;
+            width: 50px;
+            height: 24px;
             background-color: #333;
-            border-radius: 20px;
+            border-radius: 50px;
+            position: relative;
             cursor: pointer;
             outline: none;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-switch input:hover {
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
         }
 
         .custom-switch input:checked {
             background-color: #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
         }
 
         .custom-switch input::before {
             content: '';
             position: absolute;
-            top: 1px;
-            left: 2px;
+            top: 3px;
+            left: 3px;
             width: 18px;
             height: 18px;
             background-color: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
-            transform: translateX(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .custom-switch input:checked::before {
-            transform: translateX(20px);
+            transform: translateX(26px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.8);
         }
+
                 </style>
                 <section class="feature-section">
                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
             <label class="custom-switch" style="display: flex; align-items: center; gap: 10px;">
                 <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
-                <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" style="appearance: none; width: 40px; height: 20px; background-color: #333; border-radius: 20px; position: relative; cursor: pointer; outline: none; transition: background-color 0.3s ease;">
-                <span style="content: ''; position: absolute; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: transform 0.3s ease; transform: translateX(2px);"></span>
                 <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" style="appearance: none; width: 40px; height: 20px; background-color: #333; border-radius: 20px; position: relative; cursor: pointer; outline: none; transition: background-color 0.3s ease;">
                 <span style="content: ''; position: absolute; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: transform 0.3s ease; transform: translateX(2px);"></span>
             </label>
