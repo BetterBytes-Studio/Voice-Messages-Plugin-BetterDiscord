@@ -676,8 +676,7 @@ module.exports = (() => {
               staticNameRadio.checked = !savedSettings.useRandomFilename;
               randomNameRadio.checked = savedSettings.useRandomFilename;
               formatInput.value = savedSettings.format || "mp3";
-              realVoiceMessageToggle.checked =
-                savedSettings.realVoiceMessage || false;
+              realVoiceMessageToggle.checked = savedSettings.realVoiceMessage || false;
 
               const toggleFeatureCards = () => {
                 if (realVoiceMessageToggle.checked) {
@@ -691,10 +690,9 @@ module.exports = (() => {
                 }
               };
 
-              realVoiceMessageToggle.addEventListener(
-                "change",
-                toggleFeatureCards
-              );
+              toggleFeatureCards();
+
+              realVoiceMessageToggle.addEventListener("change", toggleFeatureCards);
 
               const toggleFilenameInput = () => {
                 if (randomNameRadio.checked) {
