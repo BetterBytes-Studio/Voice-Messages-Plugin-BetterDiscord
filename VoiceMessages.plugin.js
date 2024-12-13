@@ -122,8 +122,9 @@ module.exports = (() => {
           class record {
             static start = function (options) {
               const settings = BdApi.getData("VoiceMessages", "settings") || {};
-              const { echoCancellation = true, noiseCancellation = true } = settings;
-          
+              const { echoCancellation = true, noiseCancellation = true } =
+                settings;
+
               discordVoice.startLocalAudioRecording(
                 {
                   echoCancellation: echoCancellation,
@@ -137,54 +138,71 @@ module.exports = (() => {
                       icon: "ℹ️",
                     });
                   } else {
-                    BdApi.showToast("❌ Failed to start recording. Please try again!", {
-                      type: "error",
-                      icon: "⚠️",
-                    });
+                    BdApi.showToast(
+                      "❌ Failed to start recording. Please try again!",
+                      {
+                        type: "error",
+                        icon: "⚠️",
+                      }
+                    );
                   }
                 }
               );
             };
-          
+
             static stop = function () {
               const settings = BdApi.getData("VoiceMessages", "settings") || {};
               const realVoiceMessage = settings.realVoiceMessage || false;
               const useRandomFilename = settings.useRandomFilename || false;
               const staticFilename = settings.filename || "Recording";
               const format = settings.format || "mp3";
-          
+
               discordVoice.stopLocalAudioRecording((filePath) => {
                 if (!filePath) {
-                  BdApi.showToast("❌ Failed to stop recording.", { type: "error" });
+                  BdApi.showToast("❌ Failed to stop recording.", {
+                    type: "error",
+                  });
                   return;
                 }
-          
+
                 if (realVoiceMessage) {
                   // Send as a real voice message
                   try {
-                    WebpackModules.getByProps("sendMessage").sendMessage(channel.getChannelId(), {
-                      type: 5, // Type 5 indicates a voice message in Discord
-                      attachments: [
-                        {
-                          file: filePath,
-                          filename: "voice_message", // Discord ignores this for real voice messages
-                        },
-                      ],
-                    });
+                    WebpackModules.getByProps("sendMessage").sendMessage(
+                      channel.getChannelId(),
+                      {
+                        type: 5, // Type 5 indicates a voice message in Discord
+                        attachments: [
+                          {
+                            file: filePath,
+                            filename: "voice_message", // Discord ignores this for real voice messages
+                          },
+                        ],
+                      }
+                    );
                     console.log("Sent as real voice message!");
-                    BdApi.showToast("📤 Voice message sent successfully!", { type: "success" });
+                    BdApi.showToast("📤 Voice message sent successfully!", {
+                      type: "success",
+                    });
                   } catch (error) {
                     console.error("Error sending voice message:", error);
-                    BdApi.showToast("❌ Failed to send voice message.", { type: "error" });
+                    BdApi.showToast("❌ Failed to send voice message.", {
+                      type: "error",
+                    });
                   }
                 } else {
                   // Default behavior: upload as a file
                   try {
                     require("fs").readFile(filePath, {}, (err, buf) => {
                       if (buf) {
-                        const filename = useRandomFilename ? this.generateRandomFileName() : staticFilename;
-          
-                        WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload({
+                        const filename = useRandomFilename
+                          ? this.generateRandomFileName()
+                          : staticFilename;
+
+                        WebpackModules.getByProps(
+                          "instantBatchUpload",
+                          "upload"
+                        ).instantBatchUpload({
                           channelId: channel.getChannelId(),
                           files: [
                             new File(
@@ -200,17 +218,22 @@ module.exports = (() => {
                         });
                         console.log("Recording uploaded as file!");
                       } else {
-                        BdApi.showToast("❌ Failed to process recording file.", { type: "error" });
+                        BdApi.showToast(
+                          "❌ Failed to process recording file.",
+                          { type: "error" }
+                        );
                       }
                     });
                   } catch (error) {
                     console.error("Error uploading recording file:", error);
-                    BdApi.showToast("❌ Failed to upload recording file.", { type: "error" });
+                    BdApi.showToast("❌ Failed to upload recording file.", {
+                      type: "error",
+                    });
                   }
                 }
               });
             };
-          
+
             static generateRandomFileName = function () {
               const names = [
                 "PixelPurr😺",
@@ -392,12 +415,12 @@ module.exports = (() => {
               return names[Math.floor(Math.random() * names.length)];
             };
           }
-          
+
           var recording = true;
-          
+
           const { showToast } = BdApi;
           const channel = BdApi.findModuleByProps("getLastSelectedChannelId");
-          
+
           function toggleRecording() {
             if (recording) {
               record.start();
@@ -412,17 +435,16 @@ module.exports = (() => {
               });
             }
           }
-          
+
           startFunc = function (event) {
             const settings = BdApi.getData("VoiceMessages", "settings") || {};
             const keybind = settings.keybind || "F12";
-          
+
             if (event.key === keybind) {
               toggleRecording();
               event.preventDefault();
             }
           };
-          
 
           return class VoiceMessages extends Plugin {
             constructor() {
@@ -460,7 +482,7 @@ module.exports = (() => {
                     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
                     font-family: 'Roboto', sans-serif;
                   }
-
+          
                   .feature-card {
                     background-color: #1E1E1E;
                     border: 1px solid #333;
@@ -472,30 +494,30 @@ module.exports = (() => {
                     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
                     transition: box-shadow 0.3s, transform 0.3s;
                   }
-
+          
                   .feature-card:hover {
                     box-shadow: 0px 4px 8px rgba(59, 130, 246, 0.8);
                     transform: translateY(-5px);
                   }
-
+          
                   .feature-card.disabled {
                     filter: blur(3px);
                     pointer-events: none;
                   }
-
+          
                   .feature-card h3 {
                     font-size: 1.2em;
                     font-weight: bold;
                     color: #3b82f6;
                     margin-bottom: 10px;
                   }
-
+          
                   .feature-card p {
                     font-size: 1em;
                     line-height: 1.6;
                     color: #B0B0B0;
                   }
-
+          
                   .settings-input {
                     margin-top: 10px;
                     padding: 10px;
@@ -508,11 +530,11 @@ module.exports = (() => {
                     width: calc(100% - 20px);
                     transition: box-shadow 0.3s;
                   }
-
+          
                   .settings-input:hover {
                     box-shadow: 0px 0px 8px rgba(59, 130, 246, 0.8);
                   }
-
+          
                   .save-button {
                     background-color: #3b82f6;
                     color: #FFF;
@@ -524,144 +546,79 @@ module.exports = (() => {
                     margin-top: 20px;
                     transition: background-color 0.3s, box-shadow 0.3s;
                   }
-
+          
                   .save-button:hover {
                     background-color: #2563eb;
                     box-shadow: 0px 4px 8px rgba(59, 130, 246, 0.8);
                   }
-
+          
                   .hidden {
                     display: none;
                   }
-
-                  .custom-radio {
-                    appearance: none;
-                    background-color: #1E1E1E;
-                    margin: 0;
-                    font: inherit;
-                    width: 1.5em;
-                    height: 1.5em;
-                    border: 2px solid #333;
-                    border-radius: 0.5em;
-                    display: grid;
-                    place-content: center;
-                    cursor: pointer;
-                    outline: none;
-                    transition: border 0.3s, background-color 0.3s, transform 0.2s ease-in-out;
-                    position: relative;
-                  }
-
-                  .custom-radio::before {
-                    content: '';
-                    width: 0.8em;
-                    height: 0.8em;
-                    background-color: transparent;
-                    clip-path: polygon(14% 44%, 0% 63%, 50% 100%, 100% 0%, 85% 0%, 43% 78%);
-                    transition: background-color 0.3s, transform 0.2s ease-in-out;
-                    transform: scale(0);
-                  }
-
-                  .custom-radio:checked {
-                    border: 2px solid #3b82f6;
-                    background-color: #3b82f6;
-                    transform: scale(1.1);
-                  }
-
-                  .custom-radio:checked::before {
-                    background-color: #ffffff;
-                    transform: scale(1);
-                  }
-
-                  .custom-radio:focus {
-                    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-                  }
-
-                  .custom-radio-label {
-                    margin-left: 10px;
-                    color: #B0B0B0;
-                    font-size: 1em;
-                  }
-
+          
                   .switch {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 20px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s cubic-bezier(0, 1, 0.5, 1);
-    border-radius: 20px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s cubic-bezier(0, 1, 0.5, 1);
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #3b82f6;
-}
-
-input:focus + .slider {
-    box-shadow: 0 0 4px #3b82f6;
-}
-
-input:checked + .slider:before {
-    -webkit-transform: translateX(20px);
-    -ms-transform: translateX(20px);
-    transform: translateX(20px);
-}
-
-.slider.small {
-    width: 40px;
-    height: 20px;
-}
-
-.slider.small:before {
-    height: 14px;
-    width: 14px;
-}
-
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
+                    position: relative;
+                    display: inline-block;
+                    width: 40px;
+                    height: 20px;
+                  }
+          
+                  .switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                  }
+          
+                  .slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    transition: .4s cubic-bezier(0, 1, 0.5, 1);
+                    border-radius: 20px;
+                  }
+          
+                  .slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 14px;
+                    width: 14px;
+                    left: 3px;
+                    bottom: 3px;
+                    background-color: white;
+                    transition: .4s cubic-bezier(0, 1, 0.5, 1);
+                    border-radius: 50%;
+                  }
+          
+                  input:checked + .slider {
+                    background-color: #3b82f6;
+                  }
+          
+                  input:checked + .slider:before {
+                    transform: translateX(20px);
+                  }
+          
+                  .slider.small {
+                    width: 40px;
+                    height: 20px;
+                  }
+          
+                  .slider.small:before {
+                    height: 14px;
+                    width: 14px;
+                  }
                 </style>
                 <section class="feature-section">
-                <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
-    <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
-    <label class="switch" style="margin: 0;">
-        <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" checked="false">
-        <span class="slider small round"></span>
-    </label>
-</div>
-
+                  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
+                    <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
+                    <label class="switch" style="margin: 0;">
+                      <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
+                      <span class="slider small round"></span>
+                    </label>
+                  </div>
                   <div class="feature-card" id="keybindCard">
                     <h3>⌨️ Keybind</h3>
                     <p>Set your preferred keybind for starting/stopping recording:</p>
@@ -682,14 +639,14 @@ input:checked + .slider:before {
                     <h3>🎙️ Audio Format</h3>
                     <p>Select the desired audio format:</p>
                     <select class="settings-input" id="formatInput">
-                    <option value="mp3" selected>.mp3</option>
-                    <option value="ogg">.ogg</option>
-                    <option value="wav">.wav</option>
-                    <option value="aac">.aac</option>
-                    <option value="flac">.flac</option>
-                    <option value="m4a">.m4a</option>
-                    <option value="wma">.wma</option>
-                    <option value="opus">.opus</option>
+                      <option value="mp3" selected>.mp3</option>
+                      <option value="ogg">.ogg</option>
+                      <option value="wav">.wav</option>
+                      <option value="aac">.aac</option>
+                      <option value="flac">.flac</option>
+                      <option value="m4a">.m4a</option>
+                      <option value="wma">.wma</option>
+                      <option value="opus">.opus</option>
                     </select>
                   </div>
                 </section>
@@ -708,8 +665,9 @@ input:checked + .slider:before {
               const keybindCard = settingsPanel.querySelector("#keybindCard");
               const filenameCard = settingsPanel.querySelector("#filenameCard");
               const formatCard = settingsPanel.querySelector("#formatCard");
-              const realVoiceMessageToggle = settingsPanel.querySelector("#realVoiceMessageToggle");
-   
+              const realVoiceMessageToggle = settingsPanel.querySelector(
+                "#realVoiceMessageToggle"
+              );
 
               const savedSettings =
                 BdApi.getData("VoiceMessages", "settings") || {};
