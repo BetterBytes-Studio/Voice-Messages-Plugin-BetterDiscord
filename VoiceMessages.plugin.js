@@ -400,11 +400,15 @@ module.exports = (() => {
           }
 
           startFunc = function (event) {
-            if (event.key === "F12") {
+            const settings = BdApi.getData("VoiceMessages", "settings") || {};
+            const keybind = settings.keybind || "F12";
+
+            if (event.key === keybind) {
               toggleRecording();
               event.preventDefault();
             }
           };
+
           return class VoiceMessages extends Plugin {
             constructor() {
               super();
@@ -511,35 +515,53 @@ module.exports = (() => {
                   }
 
                   .custom-radio {
-                    appearance: none;
-                    background-color: #1E1E1E;
-                    margin: 0;
-                    font: inherit;
-                    width: 1.5em;
-                    height: 1.5em;
-                    border: 2px solid #333;
-                    border-radius: 0.5em;
-                    display: grid;
-                    place-content: center;
-                    cursor: pointer;
-                    outline: none;
-                    transition: border 0.3s, background-color 0.3s;
-                  }
+    appearance: none;
+    background-color: #1E1E1E;
+    margin: 0;
+    font: inherit;
+    width: 1.5em;
+    height: 1.5em;
+    border: 2px solid #333;
+    border-radius: 0.5em;
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    outline: none;
+    transition: border 0.3s, background-color 0.3s, transform 0.2s ease-in-out;
+    position: relative;
+  }
 
-                  .custom-radio:checked {
-                    border: 2px solid #3b82f6;
-                    background-color: #3b82f6;
-                  }
+  .custom-radio::before {
+    content: '';
+    width: 0.8em;
+    height: 0.8em;
+    background-color: transparent;
+    clip-path: polygon(14% 44%, 0% 63%, 50% 100%, 100% 0%, 85% 0%, 43% 78%);
+    transition: background-color 0.3s, transform 0.2s ease-in-out;
+    transform: scale(0);
+  }
 
-                  .custom-radio:focus {
-                    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-                  }
+  .custom-radio:checked {
+    border: 2px solid #3b82f6;
+    background-color: #3b82f6;
+    transform: scale(1.1);
+  }
 
-                  .custom-radio-label {
-                    margin-left: 10px;
-                    color: #B0B0B0;
-                    font-size: 1em;
-                  }
+  .custom-radio:checked::before {
+    background-color: #ffffff;
+    transform: scale(1);
+  }
+
+  .custom-radio:focus {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  .custom-radio-label {
+    margin-left: 10px;
+    color: #B0B0B0;
+    font-size: 1em;
+  }
+
                 </style>
                 <section class="feature-section">
                   <div class="feature-card">
@@ -597,10 +619,14 @@ module.exports = (() => {
                 }
               };
 
+              randomNameRadio.checked = true;
+              staticNameRadio.checked = false;
+
+              toggleFilenameInput();
+
               staticNameRadio.addEventListener("change", toggleFilenameInput);
               randomNameRadio.addEventListener("change", toggleFilenameInput);
 
-              toggleFilenameInput();
               saveButton.addEventListener("click", () => {
                 const newSettings = {
                   keybind: keybindInput.value,
