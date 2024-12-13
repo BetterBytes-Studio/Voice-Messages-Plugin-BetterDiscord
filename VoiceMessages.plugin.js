@@ -179,16 +179,12 @@ module.exports = (() => {
                         ? this.generateRandomFileName()
                         : staticFilename;
             
-                      const replyContextModule = WebpackModules.getByProps("getReplyContext");
                       const channelId = channel.getChannelId();
                       const guildId = channel.getGuildId?.();
             
-                      let replyMessageId = null;
-            
-                      if (replyContextModule?.getReply) {
-                        const replyContext = replyContextModule.getReply(channelId);
-                        replyMessageId = replyContext?.message?.id || null;
-                      }
+                      const replyContextModule = WebpackModules.getByProps("getReplyContext");
+                      const replyContext = replyContextModule?.getReply(channelId);
+                      const replyMessageId = replyContext?.message?.id;
             
                       const uploadOptions = {
                         channelId: channelId,
@@ -211,10 +207,17 @@ module.exports = (() => {
                           message_id: replyMessageId,
                           guild_id: guildId || null,
                         };
+            
                         console.log("Reply Mode Detected:", uploadOptions.messageReference);
+                      } else {
+                        console.log("No reply mode detected. Uploading as a standalone message.");
                       }
             
                       WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload(uploadOptions);
+            
+                      BdApi.showToast("✅ Recording uploaded successfully!", {
+                        type: "success",
+                      });
             
                       console.log("Recording uploaded successfully!");
                     } else {
