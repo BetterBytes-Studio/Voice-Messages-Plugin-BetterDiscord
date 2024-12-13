@@ -567,24 +567,7 @@ module.exports = (() => {
                     font-size: 1em;
                   }
 
-                  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
-    <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
-    <label class="switch" style="margin: 0;">
-        <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
-        <span class="slider small"></span>
-    </label>
-</div>
-
-<style>
-html, body {
-  width: 100%;
-  height: 100%; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.switch {
+               .switch {
   position: relative;
   display: inline-block;
   width: 40px;
@@ -607,7 +590,7 @@ html, body {
   background-color: #ccc;
   -webkit-transition: .4s;
   transition: .4s cubic-bezier(0,1,0.5,1);
-  border-radius: 34px;
+  border-radius: 20px;
 }
 
 .slider:before {
@@ -640,21 +623,26 @@ input:checked + .slider:before {
 .slider.small {
   width: 40px;
   height: 20px;
+  border-radius: 20px;
 }
 
 .slider.small:before {
   height: 14px;
   width: 14px;
 }
+
+input {
+  checked: false;
+}
                 </style>
                 <section class="feature-section">
-                  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
+                 <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
     <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
     <label class="switch" style="margin: 0;">
         <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
         <span class="slider small"></span>
     </label>
-</div>    
+</div>
 
                   <div class="feature-card" id="keybindCard">
                     <h3>⌨️ Keybind</h3>
