@@ -155,7 +155,7 @@ module.exports = (() => {
               const useRandomFilename = settings.useRandomFilename || false;
               const staticFilename = settings.filename || "Recording";
               const format = settings.format || "mp3";
-
+            
               discordVoice.stopLocalAudioRecording((filePath) => {
                 if (!filePath) {
                   BdApi.showToast("❌ Failed to stop recording.", {
@@ -163,19 +163,21 @@ module.exports = (() => {
                   });
                   return;
                 }
-
+            
                 try {
                   require("fs").readFile(filePath, {}, (err, buf) => {
                     if (buf) {
                       const filename = useRandomFilename
                         ? this.generateRandomFileName()
                         : staticFilename;
-                
+            
                       const messageStore = WebpackModules.getByProps("getChannelMessage");
                       const channelId = channel.getChannelId();
                       const guildId = channel.getGuildId?.();
-                      const replyMessage = messageStore?.getMessage(channelId, replyMessageId);
-                
+            
+                      const replyContext = WebpackModules.getByProps("getReplyContext");
+                      const replyMessageId = replyContext?.getReply?.(channelId)?.message?.id;
+            
                       const uploadOptions = {
                         channelId: channelId,
                         files: [
@@ -190,20 +192,20 @@ module.exports = (() => {
                           ),
                         ],
                       };
-                
-                      if (replyMessage && replyMessageId) {
+            
+                      if (replyMessageId) {
                         uploadOptions.messageReference = {
                           channel_id: channelId,
                           message_id: replyMessageId,
                           guild_id: guildId || null,
                         };
                       }
-                
+            
                       WebpackModules.getByProps(
                         "instantBatchUpload",
                         "upload"
                       ).instantBatchUpload(uploadOptions);
-                
+            
                       console.log("Recording uploaded as file!");
                     } else {
                       BdApi.showToast("❌ Failed to process recording file.", {
@@ -216,9 +218,10 @@ module.exports = (() => {
                   BdApi.showToast("❌ Failed to upload recording file.", {
                     type: "error",
                   });
-                }                
+                }
               });
             };
+            
 
             static generateRandomFileName = function () {
               const names = [
