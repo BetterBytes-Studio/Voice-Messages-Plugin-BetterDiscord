@@ -152,7 +152,6 @@ module.exports = (() => {
 
             static stop = function () {
               const settings = BdApi.getData("VoiceMessages", "settings") || {};
-              const realVoiceMessage = settings.realVoiceMessage || false;
               const useRandomFilename = settings.useRandomFilename || false;
               const staticFilename = settings.filename || "Recording";
               const format = settings.format || "mp3";
@@ -165,70 +164,57 @@ module.exports = (() => {
                   return;
                 }
 
-                if (realVoiceMessage) {
-                  try {
-                    WebpackModules.getByProps("sendMessage").sendMessage(
-                      channel.getChannelId(),
-                      {
-                        type: 5,
-                        attachments: [
-                          {
-                            file: filePath,
-                            filename: "voice_message",
-                          },
+                try {
+                  require("fs").readFile(filePath, {}, (err, buf) => {
+                    if (buf) {
+                      const filename = useRandomFilename
+                        ? this.generateRandomFileName()
+                        : staticFilename;
+                
+                      const messageStore = WebpackModules.getByProps("getChannelMessage");
+                      const replyInfo = messageStore?.getMessage(channel.getChannelId(), replyMessageId);
+                
+                      const uploadOptions = {
+                        channelId: channel.getChannelId(),
+                        files: [
+                          new File(
+                            [
+                              new Blob([buf], {
+                                type: `audio/${format}; codecs=opus`,
+                              }),
+                            ],
+                            `${filename}.${format}`,
+                            { type: `audio/${format}; codecs=opus` }
+                          ),
                         ],
+                      };
+                
+                      if (replyInfo) {
+                        uploadOptions.messageReference = {
+                          channel_id: channel.getChannelId(),
+                          guild_id: channel.getGuildId?.(),
+                          message_id: replyMessageId,
+                        };
                       }
-                    );
-                    console.log("Sent as real voice message!");
-                    BdApi.showToast("📤 Voice message sent successfully!", {
-                      type: "success",
-                    });
-                  } catch (error) {
-                    console.error("Error sending voice message:", error);
-                    BdApi.showToast("❌ Failed to send voice message.", {
-                      type: "error",
-                    });
-                  }
-                } else {
-                  try {
-                    require("fs").readFile(filePath, {}, (err, buf) => {
-                      if (buf) {
-                        const filename = useRandomFilename
-                          ? this.generateRandomFileName()
-                          : staticFilename;
-
-                        WebpackModules.getByProps(
-                          "instantBatchUpload",
-                          "upload"
-                        ).instantBatchUpload({
-                          channelId: channel.getChannelId(),
-                          files: [
-                            new File(
-                              [
-                                new Blob([buf], {
-                                  type: `audio/${format}; codecs=opus`,
-                                }),
-                              ],
-                              `${filename}.${format}`,
-                              { type: `audio/${format}; codecs=opus` }
-                            ),
-                          ],
-                        });
-                        console.log("Recording uploaded as file!");
-                      } else {
-                        BdApi.showToast(
-                          "❌ Failed to process recording file.",
-                          { type: "error" }
-                        );
-                      }
-                    });
-                  } catch (error) {
-                    console.error("Error uploading recording file:", error);
-                    BdApi.showToast("❌ Failed to upload recording file.", {
-                      type: "error",
-                    });
-                  }
-                }
+                
+                      WebpackModules.getByProps(
+                        "instantBatchUpload",
+                        "upload"
+                      ).instantBatchUpload(uploadOptions);
+                
+                      console.log("Recording uploaded as file!");
+                    } else {
+                      BdApi.showToast("❌ Failed to process recording file.", {
+                        type: "error",
+                      });
+                    }
+                  });
+                } catch (error) {
+                  console.error("Error uploading recording file:", error);
+                  BdApi.showToast("❌ Failed to upload recording file.", {
+                    type: "error",
+                  });
+                }                
               });
             };
 
