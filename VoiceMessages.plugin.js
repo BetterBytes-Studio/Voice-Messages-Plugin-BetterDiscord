@@ -166,17 +166,29 @@ module.exports = (() => {
             
                 try {
                   require("fs").readFile(filePath, {}, (err, buf) => {
+                    if (err) {
+                      console.error("Error reading recording file:", err);
+                      BdApi.showToast("❌ Failed to process recording file.", {
+                        type: "error",
+                      });
+                      return;
+                    }
+            
                     if (buf) {
                       const filename = useRandomFilename
                         ? this.generateRandomFileName()
                         : staticFilename;
             
-                      const messageStore = WebpackModules.getByProps("getChannelMessage");
+                      const replyContextModule = WebpackModules.getByProps("getReplyContext");
                       const channelId = channel.getChannelId();
                       const guildId = channel.getGuildId?.();
             
-                      const replyContext = WebpackModules.getByProps("getReplyContext");
-                      const replyMessageId = replyContext?.getReply?.(channelId)?.message?.id;
+                      let replyMessageId = null;
+            
+                      if (replyContextModule?.getReply) {
+                        const replyContext = replyContextModule.getReply(channelId);
+                        replyMessageId = replyContext?.message?.id || null;
+                      }
             
                       const uploadOptions = {
                         channelId: channelId,
@@ -199,14 +211,12 @@ module.exports = (() => {
                           message_id: replyMessageId,
                           guild_id: guildId || null,
                         };
+                        console.log("Reply Mode Detected:", uploadOptions.messageReference);
                       }
             
-                      WebpackModules.getByProps(
-                        "instantBatchUpload",
-                        "upload"
-                      ).instantBatchUpload(uploadOptions);
+                      WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload(uploadOptions);
             
-                      console.log("Recording uploaded as file!");
+                      console.log("Recording uploaded successfully!");
                     } else {
                       BdApi.showToast("❌ Failed to process recording file.", {
                         type: "error",
