@@ -678,6 +678,14 @@ module.exports = (() => {
               formatInput.value = savedSettings.format || "mp3";
               realVoiceMessageToggle.checked = savedSettings.realVoiceMessage || false;
 
+              const toggleFilenameInput = () => {
+                if (randomNameRadio.checked) {
+                  filenameInput.classList.add("hidden");
+                } else {
+                  filenameInput.classList.remove("hidden");
+                }
+              };
+
               const toggleFeatureCards = () => {
                 if (realVoiceMessageToggle.checked) {
                   keybindCard.classList.add("disabled");
@@ -690,18 +698,6 @@ module.exports = (() => {
                 }
               };
 
-              toggleFeatureCards();
-
-              realVoiceMessageToggle.addEventListener("change", toggleFeatureCards);
-
-              const toggleFilenameInput = () => {
-                if (randomNameRadio.checked) {
-                  filenameInput.classList.add("hidden");
-                } else {
-                  filenameInput.classList.remove("hidden");
-                }
-              };
-
               randomNameRadio.checked = true;
               staticNameRadio.checked = false;
               realVoiceMessageToggle.checked = false;
@@ -709,6 +705,7 @@ module.exports = (() => {
               toggleFilenameInput();
               toggleFeatureCards();
 
+              realVoiceMessageToggle.addEventListener("change", toggleFeatureCards);
               staticNameRadio.addEventListener("change", toggleFilenameInput);
               randomNameRadio.addEventListener("change", toggleFilenameInput);
 
