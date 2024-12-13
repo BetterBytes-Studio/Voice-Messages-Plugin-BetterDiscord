@@ -567,16 +567,54 @@ module.exports = (() => {
                     font-size: 1em;
                   }
 
+                  .custom-switch {
+            display: flex;
+            align-items: center;
+        }
+
+        .custom-switch input {
+            position: relative;
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background-color: #333;
+            border-radius: 20px;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-switch input:checked {
+            background-color: #3b82f6;
+        }
+
+        .custom-switch input::before {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            transform: translateX(0);
+        }
+
+        .custom-switch input:checked::before {
+            transform: translateX(20px);
+        }
                 </style>
                 <section class="feature-section">
-                  <div class="feature-card">
-                    <h3>🚀 Send as Real Voice Message</h3>
-                    <p>Enable this option to send your recordings as real voice messages:</p>
-                    <label class="custom-switch">
-                      <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
-                      <span class="custom-switch-slider"></span>
-                    </label>
-                  </div>
+                   <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+            <label class="custom-switch" style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
+                <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" style="appearance: none; width: 40px; height: 20px; background-color: #333; border-radius: 20px; position: relative; cursor: pointer; outline: none; transition: background-color 0.3s ease;">
+                <span style="content: ''; position: absolute; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: transform 0.3s ease; transform: translateX(2px);"></span>
+                <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" style="appearance: none; width: 40px; height: 20px; background-color: #333; border-radius: 20px; position: relative; cursor: pointer; outline: none; transition: background-color 0.3s ease;">
+                <span style="content: ''; position: absolute; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: transform 0.3s ease; transform: translateX(2px);"></span>
+            </label>
+        </div>
                   <div class="feature-card" id="keybindCard">
                     <h3>⌨️ Keybind</h3>
                     <p>Set your preferred keybind for starting/stopping recording:</p>
@@ -615,7 +653,9 @@ module.exports = (() => {
                 settingsPanel.querySelector("#randomName");
               const formatInput = settingsPanel.querySelector("#formatInput");
               const saveButton = settingsPanel.querySelector("#saveSettings");
-              const realVoiceMessageToggle = settingsPanel.querySelector("#realVoiceMessageToggle");
+              const realVoiceMessageToggle = settingsPanel.querySelector(
+                "#realVoiceMessageToggle"
+              );
               const keybindCard = settingsPanel.querySelector("#keybindCard");
               const filenameCard = settingsPanel.querySelector("#filenameCard");
               const formatCard = settingsPanel.querySelector("#formatCard");
@@ -627,7 +667,8 @@ module.exports = (() => {
               staticNameRadio.checked = !savedSettings.useRandomFilename;
               randomNameRadio.checked = savedSettings.useRandomFilename;
               formatInput.value = savedSettings.format || "ogg";
-              realVoiceMessageToggle.checked = savedSettings.realVoiceMessage || false;
+              realVoiceMessageToggle.checked =
+                savedSettings.realVoiceMessage || false;
 
               const toggleFeatureCards = () => {
                 if (realVoiceMessageToggle.checked) {
@@ -641,7 +682,10 @@ module.exports = (() => {
                 }
               };
 
-              realVoiceMessageToggle.addEventListener("change", toggleFeatureCards);
+              realVoiceMessageToggle.addEventListener(
+                "change",
+                toggleFeatureCards
+              );
 
               const toggleFilenameInput = () => {
                 if (randomNameRadio.checked) {
@@ -678,7 +722,6 @@ module.exports = (() => {
 
               return settingsPanel;
             }
-
 
             static generateRandomFileName = function () {
               const names = [
