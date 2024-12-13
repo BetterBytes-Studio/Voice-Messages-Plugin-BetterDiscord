@@ -567,80 +567,83 @@ module.exports = (() => {
                     font-size: 1em;
                   }
 
-               .switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
+                  .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
 }
 
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s cubic-bezier(0,1,0.5,1);
-  border-radius: 20px;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s cubic-bezier(0, 1, 0.5, 1);
+    border-radius: 20px;
 }
 
 .slider:before {
-  position: absolute;
-  content: "";
-  height: 14px;
-  width: 14px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s cubic-bezier(0,1,0.5,1);
-  border-radius: 50%;
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s cubic-bezier(0, 1, 0.5, 1);
+    border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #3b82f6;
+    background-color: #3b82f6;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 4px #3b82f6;
+    box-shadow: 0 0 4px #3b82f6;
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(20px);
-  -ms-transform: translateX(20px);
-  transform: translateX(20px);
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
 }
 
 .slider.small {
-  width: 40px;
-  height: 20px;
-  border-radius: 20px;
+    width: 40px;
+    height: 20px;
 }
 
 .slider.small:before {
-  height: 14px;
-  width: 14px;
+    height: 14px;
+    width: 14px;
 }
 
-input {
-  checked: false;
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }
                 </style>
                 <section class="feature-section">
-                 <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
+                <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
     <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
     <label class="switch" style="margin: 0;">
-        <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
-        <span class="slider small"></span>
+        <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" checked="false">
+        <span class="slider small round"></span>
     </label>
 </div>
 
