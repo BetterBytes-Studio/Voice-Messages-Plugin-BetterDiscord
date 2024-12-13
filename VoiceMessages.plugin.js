@@ -125,43 +125,43 @@ module.exports = (() => {
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
       const { useRandomFilename = false, filename = "Recording", format = "mp3" } = settings;
     
-      discordVoice.stopLocalAudioRecording(async (filePath) => {
+      discordVoice.stopLocalAudioRecording((filePath) => {
         if (!filePath) {
-          BdApi.showToast("❌ Failed to stop recording.", { type: "error" });
-          console.error("File path is undefined. Recording might not have started properly.");
+          BdApi.showToast("❌ Failed to stop recording: file path is undefined.", { type: "error" });
+          console.error("Recording might not have started or file path is missing.");
           return;
         }
     
         try {
           const buf = require("fs").readFileSync(filePath);
           if (!buf) {
-            throw new Error("Buffer is empty or undefined.");
+            throw new Error("File buffer is empty or invalid.");
           }
     
-          const channelModule = BdApi.findModuleByProps("getChannelId", "getGuildId");
-          const channelId = channelModule?.getChannelId?.() || BdApi.findModuleByProps("getLastSelectedChannelId")?.getLastSelectedChannelId?.();
-    
+          const channelId = this.getSelectedChannelId();
           if (!channelId) {
-            throw new Error("Channel ID is undefined. Ensure you have an active channel selected.");
+            throw new Error("Channel ID is undefined. Ensure a valid channel is selected.");
           }
     
           const filenameFinal = useRandomFilename ? this.generateRandomFileName() : filename;
     
-          const uploadResponse = await this.uploadFile(channelId, buf, filenameFinal, format);
-          if (uploadResponse.success) {
-            BdApi.showToast("🎙️ Recording uploaded successfully!", { type: "success" });
-          } else {
-            throw new Error("Upload failed: " + uploadResponse.error);
-          }
-    
+          this.uploadFile(channelId, buf, filenameFinal, format)
+            .then(() => {
+              BdApi.showToast("🎙️ Recording uploaded successfully!", { type: "success" });
+            })
+            .catch((uploadError) => {
+              console.error("Upload failed:", uploadError);
+              BdApi.showToast("❌ Upload failed: " + uploadError.message, { type: "error" });
+            });
         } catch (error) {
           console.error("Error during stopRecording:", error);
-          BdApi.showToast("❌ Recording upload failed.", { type: "error" });
+          BdApi.showToast("❌ Error occurred: " + error.message, { type: "error" });
         } finally {
           this.recording = false;
         }
       });
     }
+    
     
     async uploadFile(channelId, buffer, filename, format) {
       try {
