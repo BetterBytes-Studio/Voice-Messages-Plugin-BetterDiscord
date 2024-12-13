@@ -166,16 +166,15 @@ module.exports = (() => {
                 }
 
                 if (realVoiceMessage) {
-                  // Send as a real voice message
                   try {
                     WebpackModules.getByProps("sendMessage").sendMessage(
                       channel.getChannelId(),
                       {
-                        type: 5, // Type 5 indicates a voice message in Discord
+                        type: 5,
                         attachments: [
                           {
                             file: filePath,
-                            filename: "voice_message", // Discord ignores this for real voice messages
+                            filename: "voice_message",
                           },
                         ],
                       }
@@ -191,7 +190,6 @@ module.exports = (() => {
                     });
                   }
                 } else {
-                  // Default behavior: upload as a file
                   try {
                     require("fs").readFile(filePath, {}, (err, buf) => {
                       if (buf) {
@@ -622,6 +620,59 @@ module.exports = (() => {
   .slider.round:before {
     border-radius: 50%;
   }
+
+  .custom-radio {
+  appearance: none;
+  background-color: #1E1E1E;
+  margin: 0;
+  font: inherit;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #333;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease-in-out;
+  position: relative;
+}
+
+.custom-radio:hover {
+  border-color: #3b82f6;
+  transform: scale(1.1);
+}
+
+.custom-radio:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.custom-radio::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.custom-radio:checked::before {
+  transform: scale(1);
+}
+
+.custom-radio-label {
+  margin-left: 8px;
+  color: #B0B0B0;
+  font-size: 1em;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.custom-radio-label:hover {
+  color: #3b82f6;
+}
                 </style>
                 <section class="feature-section">
                   <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 20px; gap: 10px;">
