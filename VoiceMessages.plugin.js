@@ -701,7 +701,6 @@ module.exports = (() => {
               staticNameRadio.checked = false;
 
               toggleFilenameInput();
-              toggleFeatureCards();
 
               staticNameRadio.addEventListener("change", toggleFilenameInput);
               randomNameRadio.addEventListener("change", toggleFilenameInput);
