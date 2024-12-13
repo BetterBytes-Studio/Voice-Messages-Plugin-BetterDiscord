@@ -567,61 +567,99 @@ module.exports = (() => {
                     font-size: 1em;
                   }
 
-                     .custom-switch {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+             <center>
+<label class="switch">
+  <input type="checkbox">
+  <span class="slider"></span>
+</label>
+</center>
 
-        .custom-switch input {
-            appearance: none;
-            width: 50px;
-            height: 24px;
-            background-color: #333;
-            border-radius: 50px;
-            position: relative;
-            cursor: pointer;
-            outline: none;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-        }
+<style>
+html, body {
+  width: 100%;
+  height: 100%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-        .custom-switch input:hover {
-            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
-        }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin: 9px;
+}
 
-        .custom-switch input:checked {
-            background-color: #3b82f6;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
-        }
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-        .custom-switch input::before {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 18px;
-            height: 18px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s cubic-bezier(0,1,0.5,1);
+  border-radius: 4px;
+}
 
-        .custom-switch input:checked::before {
-            transform: translateX(26px);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.8);
-        }
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s cubic-bezier(0,1,0.5,1);
+  border-radius: 3px;
+}
 
+input:checked + .slider {
+  background-color: #3b82f6;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 4px #3b82f6;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+input:focus + .slider.blue {
+  box-shadow: 0 0 4px #3b82f6;
+}
+
+input:checked + .slider.blue {
+  background-color: #3b82f6;
+}
                 </style>
                 <section class="feature-section">
-                   <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-            <label class="custom-switch" style="display: flex; align-items: center; gap: 10px;">
-                <span style="color: #B0B0B0; font-size: 1em;">🚀 Send as Real Voice Message</span>
-                <input type="checkbox" id="realVoiceMessageToggle" class="settings-input" style="appearance: none; width: 40px; height: 20px; background-color: #333; border-radius: 20px; position: relative; cursor: pointer; outline: none; transition: background-color 0.3s ease;">
-                <span style="content: ''; position: absolute; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: transform 0.3s ease; transform: translateX(2px);"></span>
-            </label>
-        </div>
+                    <label class="switch">
+                      <input type="checkbox" id="realVoiceMessageToggle" class="settings-input">
+                      <span class="slider"></span>
+                    </label>
+                    <span style="color: #B0B0B0; font-size: 1em; margin-left: 10px;">🚀 Send as Real Voice Message</span>
                   <div class="feature-card" id="keybindCard">
                     <h3>⌨️ Keybind</h3>
                     <p>Set your preferred keybind for starting/stopping recording:</p>
