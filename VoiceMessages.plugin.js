@@ -682,8 +682,8 @@ input:checked + .slider:before {
                     <h3>🎙️ Audio Format</h3>
                     <p>Select the desired audio format:</p>
                     <select class="settings-input" id="formatInput">
-                    <option value="ogg" selected>.ogg</option>
-                    <option value="mp3">.mp3</option>
+                    <option value="mp3" selected>.mp3</option>
+                    <option value="ogg">.ogg</option>
                     <option value="wav">.wav</option>
                     <option value="aac">.aac</option>
                     <option value="flac">.flac</option>
