@@ -122,9 +122,8 @@ module.exports = (() => {
           class record {
             static start = function (options) {
               const settings = BdApi.getData("VoiceMessages", "settings") || {};
-              const { echoCancellation = true, noiseCancellation = true } =
-                settings;
-
+              const { echoCancellation = true, noiseCancellation = true } = settings;
+          
               discordVoice.startLocalAudioRecording(
                 {
                   echoCancellation: echoCancellation,
@@ -138,37 +137,54 @@ module.exports = (() => {
                       icon: "ℹ️",
                     });
                   } else {
-                    BdApi.showToast(
-                      "❌ Failed to start recording. Please try again!",
-                      {
-                        type: "error",
-                        icon: "⚠️",
-                      }
-                    );
+                    BdApi.showToast("❌ Failed to start recording. Please try again!", {
+                      type: "error",
+                      icon: "⚠️",
+                    });
                   }
                 }
               );
             };
-
+          
             static stop = function () {
               const settings = BdApi.getData("VoiceMessages", "settings") || {};
+              const realVoiceMessage = settings.realVoiceMessage || false;
               const useRandomFilename = settings.useRandomFilename || false;
               const staticFilename = settings.filename || "Recording";
-              const format = settings.format || "ogg";
-
+              const format = settings.format || "mp3";
+          
               discordVoice.stopLocalAudioRecording((filePath) => {
-                if (filePath) {
+                if (!filePath) {
+                  BdApi.showToast("❌ Failed to stop recording.", { type: "error" });
+                  return;
+                }
+          
+                if (realVoiceMessage) {
+                  // Send as a real voice message
+                  try {
+                    WebpackModules.getByProps("sendMessage").sendMessage(channel.getChannelId(), {
+                      type: 5, // Type 5 indicates a voice message in Discord
+                      attachments: [
+                        {
+                          file: filePath,
+                          filename: "voice_message", // Discord ignores this for real voice messages
+                        },
+                      ],
+                    });
+                    console.log("Sent as real voice message!");
+                    BdApi.showToast("📤 Voice message sent successfully!", { type: "success" });
+                  } catch (error) {
+                    console.error("Error sending voice message:", error);
+                    BdApi.showToast("❌ Failed to send voice message.", { type: "error" });
+                  }
+                } else {
+                  // Default behavior: upload as a file
                   try {
                     require("fs").readFile(filePath, {}, (err, buf) => {
                       if (buf) {
-                        const filename = useRandomFilename
-                          ? this.generateRandomFileName()
-                          : staticFilename;
-
-                        WebpackModules.getByProps(
-                          "instantBatchUpload",
-                          "upload"
-                        ).instantBatchUpload({
+                        const filename = useRandomFilename ? this.generateRandomFileName() : staticFilename;
+          
+                        WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload({
                           channelId: channel.getChannelId(),
                           files: [
                             new File(
@@ -182,21 +198,19 @@ module.exports = (() => {
                             ),
                           ],
                         });
+                        console.log("Recording uploaded as file!");
                       } else {
-                        BdApi.showToast("Failed to finish recording", {
-                          type: "error",
-                          icon: "⚠️",
-                        });
+                        BdApi.showToast("❌ Failed to process recording file.", { type: "error" });
                       }
                     });
-                  } catch (e) {
-                    console.log(e);
+                  } catch (error) {
+                    console.error("Error uploading recording file:", error);
+                    BdApi.showToast("❌ Failed to upload recording file.", { type: "error" });
                   }
                 }
-                console.log("RECORDING STOPPED! 🎤");
               });
             };
-
+          
             static generateRandomFileName = function () {
               const names = [
                 "PixelPurr😺",
@@ -378,14 +392,14 @@ module.exports = (() => {
               return names[Math.floor(Math.random() * names.length)];
             };
           }
-
+          
           var recording = true;
-
+          
           const { showToast } = BdApi;
           const channel = BdApi.findModuleByProps("getLastSelectedChannelId");
-
+          
           function toggleRecording() {
-            if (recording === true) {
+            if (recording) {
               record.start();
               recording = false;
             } else {
@@ -398,16 +412,17 @@ module.exports = (() => {
               });
             }
           }
-
+          
           startFunc = function (event) {
             const settings = BdApi.getData("VoiceMessages", "settings") || {};
             const keybind = settings.keybind || "F12";
-
+          
             if (event.key === keybind) {
               toggleRecording();
               event.preventDefault();
             }
           };
+          
 
           return class VoiceMessages extends Plugin {
             constructor() {
@@ -667,9 +682,14 @@ input:checked + .slider:before {
                     <h3>🎙️ Audio Format</h3>
                     <p>Select the desired audio format:</p>
                     <select class="settings-input" id="formatInput">
-                      <option value="ogg" selected>.ogg</option>
-                      <option value="mp3">.mp3</option>
-                      <option value="wav">.wav</option>
+                    <option value="ogg" selected>.ogg</option>
+                    <option value="mp3">.mp3</option>
+                    <option value="wav">.wav</option>
+                    <option value="aac">.aac</option>
+                    <option value="flac">.flac</option>
+                    <option value="m4a">.m4a</option>
+                    <option value="wma">.wma</option>
+                    <option value="opus">.opus</option>
                     </select>
                   </div>
                 </section>
@@ -685,12 +705,11 @@ input:checked + .slider:before {
                 settingsPanel.querySelector("#randomName");
               const formatInput = settingsPanel.querySelector("#formatInput");
               const saveButton = settingsPanel.querySelector("#saveSettings");
-              const realVoiceMessageToggle = settingsPanel.querySelector(
-                "#realVoiceMessageToggle"
-              );
               const keybindCard = settingsPanel.querySelector("#keybindCard");
               const filenameCard = settingsPanel.querySelector("#filenameCard");
               const formatCard = settingsPanel.querySelector("#formatCard");
+              const realVoiceMessageToggle = settingsPanel.querySelector("#realVoiceMessageToggle");
+   
 
               const savedSettings =
                 BdApi.getData("VoiceMessages", "settings") || {};
@@ -698,7 +717,7 @@ input:checked + .slider:before {
               filenameInput.value = savedSettings.filename || "";
               staticNameRadio.checked = !savedSettings.useRandomFilename;
               randomNameRadio.checked = savedSettings.useRandomFilename;
-              formatInput.value = savedSettings.format || "ogg";
+              formatInput.value = savedSettings.format || "mp3";
               realVoiceMessageToggle.checked =
                 savedSettings.realVoiceMessage || false;
 
@@ -729,6 +748,7 @@ input:checked + .slider:before {
 
               randomNameRadio.checked = true;
               staticNameRadio.checked = false;
+              realVoiceMessageToggle.checked = false;
 
               toggleFilenameInput();
               toggleFeatureCards();
