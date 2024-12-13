@@ -139,7 +139,7 @@ module.exports = (() => {
           }
 
           const channelId = BdApi.findModuleByProps("getLastSelectedChannelId").getLastSelectedChannelId();
-          const filenameFinal = useRandomFilename ? this.generateRandomFileName() : filename;
+          const filenameFinal = useRandomFilename ? VoiceMessages.generateRandomFileName() : filename;
 
           BdApi.findModuleByProps("instantBatchUpload", "upload").instantBatchUpload({
             channelId,
@@ -157,6 +157,7 @@ module.exports = (() => {
         });
       });
     }
+
 
     getSettingsPanel() {
       const settingsPanel = document.createElement("div");
