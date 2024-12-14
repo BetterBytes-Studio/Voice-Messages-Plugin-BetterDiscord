@@ -49,9 +49,6 @@ Ensure you have BetterDiscord installed. If you don’t, download it from [Bette
   - Ensure you have the necessary microphone permissions enabled.
   - Restart Discord and try again.
 
-- **Library Missing:**
-  - If you see a `Library Missing` prompt, follow the instructions to download the required library.
-
 - **Audio Upload Failed:**
   - Check your internet connection and try again.
 
