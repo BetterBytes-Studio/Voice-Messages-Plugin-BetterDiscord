@@ -125,55 +125,59 @@ module.exports = (() => {
 
     stopRecording() {
       BdApi.showToast("🎙️ Stopping recording...", { type: "info" });
-      const discordVoice =
-        DiscordNative.nativeModules.requireModule("discord_voice");
-
+      const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
+  
       discordVoice.stopLocalAudioRecording((filePath) => {
-        if (!filePath) {
-          BdApi.showToast("❌ Recording file not found.", { type: "error" });
-          console.error("No file found after stopping recording.");
-          return;
-        }
-
-        fetch(filePath)
-          .then((response) => response.blob())
-          .then((blob) => {
-            const fileName = this.settings.useRandomFilename
-              ? `${this.generateRandomFileName()}.${this.settings.format}`
-              : `${this.settings.filename}.${this.settings.format}`;
-
-            const channel = BdApi.findModuleByProps("getChannelId");
-            const upload = BdApi.findModuleByProps("instantBatchUpload");
-
-            if (!channel || !upload) {
-              BdApi.showToast("❌ Upload module not found.", { type: "error" });
-              console.error("Upload module not found.");
+          if (!filePath || typeof filePath !== "string") {
+              BdApi.showToast("❌ Recording file not found or invalid.", { type: "error" });
+              console.error("No valid filePath after stopping recording: ", filePath);
               return;
-            }
-
-            upload.instantBatchUpload({
-              channelId: channel.getChannelId(),
-              files: [
-                new File([blob], fileName, {
-                  type: `audio/${this.settings.format}`,
-                }),
-              ],
-            });
-
-            BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, {
-              type: "success",
-            });
-          })
-          .catch((error) => {
-            BdApi.showToast("❌ Failed to process the recording.", {
-              type: "error",
-            });
-            console.error("Error processing the recording: ", error);
-          });
+          }
+  
+          console.log("Recording stopped. File path: ", filePath);
+  
+          fetch(filePath)
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error(`HTTP error! status: ${response.status}`);
+                  }
+                  return response.blob();
+              })
+              .then((blob) => {
+                  const fileName = this.settings.useRandomFilename
+                      ? `${this.generateRandomFileName()}.${this.settings.format}`
+                      : `${this.settings.filename}.${this.settings.format}`;
+  
+                  const channel = BdApi.findModuleByProps("getChannelId");
+                  const upload = BdApi.findModuleByProps("instantBatchUpload");
+  
+                  if (!channel || !upload) {
+                      BdApi.showToast("❌ Upload module not found.", { type: "error" });
+                      console.error("Upload module or channel module not found.");
+                      return;
+                  }
+  
+                  upload.instantBatchUpload({
+                      channelId: channel.getChannelId(),
+                      files: [
+                          new File([blob], fileName, {
+                              type: `audio/${this.settings.format}`,
+                          }),
+                      ],
+                  });
+  
+                  BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, { type: "success" });
+                  console.log("Recording uploaded: ", fileName);
+              })
+              .catch((error) => {
+                  BdApi.showToast("❌ Failed to process the recording.", { type: "error" });
+                  console.error("Error processing the recording: ", error);
+              });
       });
-
+  
       this.recording = false;
-    }
+  }
+  
 
     static generateRandomFileName = function () {
       const names = [
