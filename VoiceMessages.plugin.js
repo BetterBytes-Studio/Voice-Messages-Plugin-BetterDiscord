@@ -98,86 +98,76 @@ module.exports = (() => {
       }
     }
 
-    startRecording() {
-      BdApi.showToast("🎙️ Starting recording...", { type: "info" });
-      const discordVoice =
-        DiscordNative.nativeModules.requireModule("discord_voice");
+    async startRecording() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        BdApi.showToast("❌ Your browser does not support audio recording.", {
+          type: "error",
+        });
+        return;
+      }
 
-      discordVoice.startLocalAudioRecording(
-        {
-          echoCancellation: true,
-          noiseCancellation: true,
-        },
-        (success) => {
-          if (success) {
-            BdApi.showToast("🎙️ Recording started successfully!", {
-              type: "success",
-            });
-            console.log("Recording started.");
-            this.recording = true;
-          } else {
-            BdApi.showToast("❌ Failed to start recording.", { type: "error" });
-            console.error("Recording failed to start.");
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        this.mediaRecorder = new MediaRecorder(stream);
+
+        this.audioChunks = [];
+
+        this.mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            this.audioChunks.push(event.data);
           }
-        }
-      );
+        };
+
+        this.mediaRecorder.onstop = () => {
+          this.uploadRecording();
+        };
+
+        this.mediaRecorder.start();
+        this.recording = true;
+        BdApi.showToast("🎙️ Recording started.", { type: "success" });
+      } catch (error) {
+        BdApi.showToast("❌ Failed to start recording.", { type: "error" });
+        console.error("Error starting recording: ", error);
+      }
     }
 
     stopRecording() {
-      BdApi.showToast("🎙️ Stopping recording...", { type: "info" });
-      const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
-  
-      discordVoice.stopLocalAudioRecording((filePath) => {
-          if (!filePath || typeof filePath !== "string") {
-              BdApi.showToast("❌ Recording file not found or invalid.", { type: "error" });
-              console.error("No valid filePath after stopping recording: ", filePath);
-              return;
-          }
-  
-          console.log("Recording stopped. File path: ", filePath);
-  
-          fetch(filePath)
-              .then((response) => {
-                  if (!response.ok) {
-                      throw new Error(`HTTP error! status: ${response.status}`);
-                  }
-                  return response.blob();
-              })
-              .then((blob) => {
-                  const fileName = this.settings.useRandomFilename
-                      ? `${this.generateRandomFileName()}.${this.settings.format}`
-                      : `${this.settings.filename}.${this.settings.format}`;
-  
-                  const channel = BdApi.findModuleByProps("getChannelId");
-                  const upload = BdApi.findModuleByProps("instantBatchUpload");
-  
-                  if (!channel || !upload) {
-                      BdApi.showToast("❌ Upload module not found.", { type: "error" });
-                      console.error("Upload module or channel module not found.");
-                      return;
-                  }
-  
-                  upload.instantBatchUpload({
-                      channelId: channel.getChannelId(),
-                      files: [
-                          new File([blob], fileName, {
-                              type: `audio/${this.settings.format}`,
-                          }),
-                      ],
-                  });
-  
-                  BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, { type: "success" });
-                  console.log("Recording uploaded: ", fileName);
-              })
-              .catch((error) => {
-                  BdApi.showToast("❌ Failed to process the recording.", { type: "error" });
-                  console.error("Error processing the recording: ", error);
-              });
+      if (this.mediaRecorder && this.recording) {
+        this.mediaRecorder.stop();
+        this.recording = false;
+        BdApi.showToast("🎙️ Recording stopped.", { type: "success" });
+      }
+    }
+
+    uploadRecording() {
+      const blob = new Blob(this.audioChunks, {
+        type: `audio/${this.settings.format}`,
       });
-  
-      this.recording = false;
-  }
-  
+      const fileName = this.settings.useRandomFilename
+        ? `${this.generateRandomFileName()}.${this.settings.format}`
+        : `${this.settings.filename}.${this.settings.format}`;
+
+      const channel = BdApi.findModuleByProps("getChannelId");
+      const upload = BdApi.findModuleByProps("instantBatchUpload");
+
+      if (!channel || !upload) {
+        BdApi.showToast("❌ Upload module not found.", { type: "error" });
+        console.error("Upload module or channel module not found.");
+        return;
+      }
+
+      upload.instantBatchUpload({
+        channelId: channel.getChannelId(),
+        files: [new File([blob], fileName)],
+      });
+
+      BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, {
+        type: "success",
+      });
+      console.log("Recording uploaded: ", fileName);
+    }
 
     static generateRandomFileName = function () {
       const names = [
