@@ -100,68 +100,80 @@ module.exports = (() => {
 
     startRecording() {
       BdApi.showToast("🎙️ Starting recording...", { type: "info" });
-      const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
+      const discordVoice =
+        DiscordNative.nativeModules.requireModule("discord_voice");
 
       discordVoice.startLocalAudioRecording(
-          {
-              echoCancellation: true,
-              noiseCancellation: true,
-          },
-          (success) => {
-              if (success) {
-                  BdApi.showToast("🎙️ Recording started successfully!", { type: "success" });
-                  console.log("Recording started.");
-                  this.recording = true;
-              } else {
-                  BdApi.showToast("❌ Failed to start recording.", { type: "error" });
-                  console.error("Recording failed to start.");
-              }
+        {
+          echoCancellation: true,
+          noiseCancellation: true,
+        },
+        (success) => {
+          if (success) {
+            BdApi.showToast("🎙️ Recording started successfully!", {
+              type: "success",
+            });
+            console.log("Recording started.");
+            this.recording = true;
+          } else {
+            BdApi.showToast("❌ Failed to start recording.", { type: "error" });
+            console.error("Recording failed to start.");
           }
+        }
       );
-  }
+    }
 
-  stopRecording() {
+    stopRecording() {
       BdApi.showToast("🎙️ Stopping recording...", { type: "info" });
-      const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
+      const discordVoice =
+        DiscordNative.nativeModules.requireModule("discord_voice");
 
       discordVoice.stopLocalAudioRecording((filePath) => {
-          if (!filePath) {
-              BdApi.showToast("❌ Recording file not found.", { type: "error" });
-              console.error("No file found after stopping recording.");
+        if (!filePath) {
+          BdApi.showToast("❌ Recording file not found.", { type: "error" });
+          console.error("No file found after stopping recording.");
+          return;
+        }
+
+        fetch(filePath)
+          .then((response) => response.blob())
+          .then((blob) => {
+            const fileName = this.settings.useRandomFilename
+              ? `${this.generateRandomFileName()}.${this.settings.format}`
+              : `${this.settings.filename}.${this.settings.format}`;
+
+            const channel = BdApi.findModuleByProps("getChannelId");
+            const upload = BdApi.findModuleByProps("instantBatchUpload");
+
+            if (!channel || !upload) {
+              BdApi.showToast("❌ Upload module not found.", { type: "error" });
+              console.error("Upload module not found.");
               return;
-          }
+            }
 
-          const fs = require("fs");
-          fs.readFile(filePath, (err, buffer) => {
-              if (err) {
-                  BdApi.showToast("❌ Failed to read recording file.", { type: "error" });
-                  console.error("Error reading file: ", err);
-                  return;
-              }
+            upload.instantBatchUpload({
+              channelId: channel.getChannelId(),
+              files: [
+                new File([blob], fileName, {
+                  type: `audio/${this.settings.format}`,
+                }),
+              ],
+            });
 
-              const fileName = this.settings.useRandomFilename
-                  ? `${this.generateRandomFileName()}.${this.settings.format}`
-                  : `${this.settings.filename}.${this.settings.format}`;
-
-              const channel = BdApi.findModuleByProps("getChannelId");
-              const upload = BdApi.findModuleByProps("instantBatchUpload");
-
-              upload.instantBatchUpload({
-                  channelId: channel.getChannelId(),
-                  files: [
-                      new File(
-                          [new Blob([buffer], { type: `audio/${this.settings.format}` })],
-                          fileName
-                      ),
-                  ],
-              });
-
-              BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, { type: "success" });
+            BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, {
+              type: "success",
+            });
+          })
+          .catch((error) => {
+            BdApi.showToast("❌ Failed to process the recording.", {
+              type: "error",
+            });
+            console.error("Error processing the recording: ", error);
           });
       });
 
       this.recording = false;
-  }
+    }
 
     static generateRandomFileName = function () {
       const names = [
