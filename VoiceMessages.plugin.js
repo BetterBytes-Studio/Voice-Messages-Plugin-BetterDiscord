@@ -100,33 +100,40 @@ module.exports = (() => {
 
     startRecording() {
       const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
+      const settings = BdApi.getData("VoiceMessages", "settings") || {};
+      const echoCancellation = settings.echoCancellation ?? true;
+      const noiseCancellation = settings.noiseCancellation ?? true;
 
       discordVoice.startLocalAudioRecording(
         {
-          echoCancellation: true,
-          noiseCancellation: true,
+          echoCancellation,
+          noiseCancellation,
         },
         (success) => {
           if (success) {
-            console.log("STARTED RECORDING");
-          } else {
-            BdApi.showToast("Failed to start recording", {
-              type: "failure",
+            console.log("🎙️ Recording has started!");
+            BdApi.showToast("🎙️ Recording started successfully!", {
+              type: "success",
+              icon: "ℹ️",
             });
+          } else {
+            BdApi.showToast(
+              "❌ Failed to start recording. Please try again!",
+              {
+                type: "error",
+                icon: "⚠️",
+              }
+            );
           }
         }
       );
     }
 
     stopRecording() {
-      const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
-      const channel = BdApi.findModuleByProps("getChannelId");
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
-      const {
-        useRandomFilename = false,
-        filename = "Recording",
-        format = "mp3",
-      } = settings;
+      const useRandomFilename = settings.useRandomFilename ?? true;
+      const customFilename = settings.filename || "Recording";
+      const format = settings.format || "mp3";
 
       discordVoice.stopLocalAudioRecording((filePath) => {
         if (filePath) {
@@ -134,8 +141,8 @@ module.exports = (() => {
             require("fs").readFile(filePath, {}, (err, buf) => {
               if (buf) {
                 const filenameFinal = useRandomFilename
-                  ? this.generateRandomFileName()
-                  : filename;
+                  ? Record.generateRandomFileName()
+                  : customFilename;
 
                 WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload({
                   channelId: channel.getChannelId(),
@@ -147,17 +154,23 @@ module.exports = (() => {
                     ),
                   ],
                 });
+
+                BdApi.showToast("🎙️ Recording uploaded successfully!", {
+                  type: "success",
+                  icon: "✔️",
+                });
               } else {
-                BdApi.showToast("Failed to finish recording", {
-                  type: "failure",
+                BdApi.showToast("❌ Failed to finish recording.", {
+                  type: "error",
+                  icon: "⚠️",
                 });
               }
             });
           } catch (e) {
-            console.log(e);
+            console.error("Error during upload:", e);
           }
         }
-        console.log("STOPPED RECORDING");
+        console.log("RECORDING STOPPED! 🎤");
       });
     }
     
