@@ -83,13 +83,13 @@ module.exports = (() => {
     onKeyDown(event) {
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
       const keybind = settings.keybind || "F12";
-    
+
       if (event.key === keybind) {
         this.toggleRecording();
         event.preventDefault();
       }
     }
-    
+
     toggleRecording() {
       if (this.recording) {
         this.stopRecording();
@@ -97,17 +97,15 @@ module.exports = (() => {
         this.startRecording();
       }
     }
-    
+
     startRecording() {
-      const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
-      const settings = BdApi.getData("VoiceMessages", "settings") || {};
-      const echoCancellation = settings.echoCancellation ?? true;
-      const noiseCancellation = settings.noiseCancellation ?? true;
-    
+      const discordVoice =
+        DiscordNative.nativeModules.requireModule("discord_voice");
+
       discordVoice.startLocalAudioRecording(
         {
-          echoCancellation,
-          noiseCancellation,
+          echoCancellation: true,
+          noiseCancellation: true,
         },
         (success) => {
           if (success) {
@@ -126,60 +124,92 @@ module.exports = (() => {
         }
       );
     }
-    
+
     stopRecording() {
-      const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
-      const channelModule = BdApi.findModuleByProps("getLastSelectedChannelId");
+      const discordVoice =
+        DiscordNative.nativeModules.requireModule("discord_voice");
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
       const useRandomFilename = settings.useRandomFilename ?? true;
       const customFilename = settings.filename || "Recording";
       const format = settings.format || "mp3";
-    
-      discordVoice.stopLocalAudioRecording((filePath) => {
-        if (filePath) {
-          try {
-            require("fs").readFile(filePath, {}, (err, buf) => {
-              if (buf) {
-                const filenameFinal = useRandomFilename
-                  ? this.generateRandomFileName()
-                  : customFilename;
-    
-                WebpackModules.getByProps("instantBatchUpload", "upload").instantBatchUpload({
-                  channelId: channelModule.getLastSelectedChannelId(),
-                  files: [
-                    new File(
-                      [new Blob([buf], { type: `audio/${format}; codecs=opus` })],
-                      `${filenameFinal}.${format}`,
-                      { type: `audio/${format}; codecs=opus` }
-                    ),
-                  ],
-                });
-    
-                BdApi.showToast("🎙️ Recording uploaded successfully!", {
-                  type: "success",
-                  icon: "✔️",
-                });
-              } else {
-                BdApi.showToast("❌ Failed to finish recording.", {
-                  type: "error",
-                  icon: "⚠️",
-                });
-              }
-            });
-          } catch (e) {
-            console.error("Error during upload:", e);
-          }
-        } else {
+
+      discordVoice.stopLocalAudioRecording(async (filePath) => {
+        if (!filePath) {
           BdApi.showToast("❌ Recording file not found. Stop failed.", {
             type: "error",
             icon: "⚠️",
           });
+          console.error("Recording file not found.");
+          return;
         }
+
+        try {
+          const fs = require("fs");
+
+          fs.readFile(filePath, async (err, buf) => {
+            if (err || !buf) {
+              BdApi.showToast("❌ Failed to finish recording.", {
+                type: "error",
+                icon: "⚠️",
+              });
+              console.error("Error reading recording file:", err);
+              return;
+            }
+
+            const filenameFinal = useRandomFilename
+              ? this.generateRandomFileName()
+              : customFilename;
+
+            try {
+              const uploadModule = WebpackModules.getByProps(
+                "instantBatchUpload",
+                "upload"
+              );
+              if (!uploadModule) {
+                BdApi.showToast("❌ Upload module not found.", {
+                  type: "error",
+                  icon: "⚠️",
+                });
+                console.error("Upload module not found.");
+                return;
+              }
+
+              uploadModule.instantBatchUpload({
+                channelId: channel.getChannelId(),
+                files: [
+                  new File(
+                    [new Blob([buf], { type: `audio/${format}; codecs=opus` })],
+                    `${filenameFinal}.${format}`,
+                    { type: `audio/${format}; codecs=opus` }
+                  ),
+                ],
+              });
+
+              BdApi.showToast("🎙️ Recording uploaded successfully!", {
+                type: "success",
+                icon: "✔️",
+              });
+            } catch (uploadError) {
+              BdApi.showToast("❌ Failed to upload recording.", {
+                type: "error",
+                icon: "⚠️",
+              });
+              console.error("Error during upload:", uploadError);
+            }
+          });
+        } catch (e) {
+          BdApi.showToast("❌ An unexpected error occurred.", {
+            type: "error",
+            icon: "⚠️",
+          });
+          console.error("Unexpected error during recording handling:", e);
+        }
+
         console.log("RECORDING STOPPED! 🎤");
         this.recording = false;
       });
-    }    
-    
+    }
+
     static generateRandomFileName = function () {
       const names = [
         "PixelPurr😺",
@@ -360,7 +390,6 @@ module.exports = (() => {
       ];
       return names[Math.floor(Math.random() * names.length)];
     };
-    
 
     getSettingsPanel() {
       const settingsPanel = document.createElement("div");
@@ -621,20 +650,16 @@ color: #3b82f6;
       `;
 
       const keybindInput = settingsPanel.querySelector("#keybindInput");
-      const filenameInput =
-        settingsPanel.querySelector("#filenameInput");
-      const staticNameRadio =
-        settingsPanel.querySelector("#staticName");
-      const randomNameRadio =
-        settingsPanel.querySelector("#randomName");
+      const filenameInput = settingsPanel.querySelector("#filenameInput");
+      const staticNameRadio = settingsPanel.querySelector("#staticName");
+      const randomNameRadio = settingsPanel.querySelector("#randomName");
       const formatInput = settingsPanel.querySelector("#formatInput");
       const saveButton = settingsPanel.querySelector("#saveSettings");
       const keybindCard = settingsPanel.querySelector("#keybindCard");
       const filenameCard = settingsPanel.querySelector("#filenameCard");
       const formatCard = settingsPanel.querySelector("#formatCard");
 
-      const savedSettings =
-        BdApi.getData("VoiceMessages", "settings") || {};
+      const savedSettings = BdApi.getData("VoiceMessages", "settings") || {};
       keybindInput.value = savedSettings.keybind || "F12";
       filenameInput.value = savedSettings.filename || "";
       staticNameRadio.checked = !savedSettings.useRandomFilename;
@@ -662,7 +687,7 @@ color: #3b82f6;
           keybind: keybindInput.value,
           filename: filenameInput.value,
           useRandomFilename: randomNameRadio.checked,
-          format: formatInput.value
+          format: formatInput.value,
         };
 
         BdApi.saveData("VoiceMessages", "settings", newSettings);
