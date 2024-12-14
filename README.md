@@ -21,17 +21,11 @@ VoiceMessages is a simple yet powerful plugin for BetterDiscord that allows user
 Ensure you have BetterDiscord installed. If you don’t, download it from [BetterDiscord’s official website](https://betterdiscord.app/).
 
 ### Steps
-1. **Download the Plugin Library**
-   - This plugin requires the [ZeresPluginLibrary](https://betterdiscord.app/plugin/ZeresPluginLibrary).
-   - If the library is missing, the plugin will prompt you to download it automatically.
 
-2. **Download the Plugin**
+1. **Download the Plugin**
    - Download the VoiceMessages plugin from [GitHub](https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js).
 
-3. **Install the Plugin**
-   - Place both the `ZeresPluginLibrary` and `VoiceMessages.plugin.js` files in your BetterDiscord plugins folder (`\AppData\Roaming\BetterDiscord\plugins`).
-
-4. **Enable the Plugin**
+2. **Enable the Plugin**
    - Open Discord, navigate to User Settings > Plugins, and enable `VoiceMessages`.
 
 ---
@@ -81,4 +75,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) fi
 ### Credits
 - **Author:** UnStackss
 - **GitHub:** [UnStackss](https://github.com/UnStackss)
-- **Plugin Library:** [ZeresPluginLibrary](https://betterdiscord.app/plugin/ZeresPluginLibrary)
+- **Plugin Library:** [BdApi](https://docs.betterdiscord.app/api/bdapi#bdapi)
