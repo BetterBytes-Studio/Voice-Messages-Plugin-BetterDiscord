@@ -100,38 +100,38 @@ module.exports = (() => {
 
     async startRecording() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        BdApi.showToast("❌ Your browser does not support audio recording.", {
-          type: "error",
-        });
-        return;
+          BdApi.showToast("❌ Your browser does not support audio recording.", { type: "error" });
+          return;
       }
-
+  
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        this.mediaRecorder = new MediaRecorder(stream);
-
-        this.audioChunks = [];
-
-        this.mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            this.audioChunks.push(event.data);
-          }
-        };
-
-        this.mediaRecorder.onstop = () => {
-          this.uploadRecording();
-        };
-
-        this.mediaRecorder.start();
-        this.recording = true;
-        BdApi.showToast("🎙️ Recording started.", { type: "success" });
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          this.mediaRecorder = new MediaRecorder(stream);
+  
+          this.audioChunks = [];
+  
+          this.mediaRecorder.ondataavailable = (event) => {
+              if (event.data.size > 0) {
+                  this.audioChunks.push(event.data);
+              }
+          };
+  
+          this.mediaRecorder.onstop = () => {
+              this.uploadRecording();
+          };
+  
+          this.mediaRecorder.start();
+          this.recording = true;
+          BdApi.showToast("🎙️ Recording started.", { type: "success" });
       } catch (error) {
-        BdApi.showToast("❌ Failed to start recording.", { type: "error" });
-        console.error("Error starting recording: ", error);
+          if (error.name === "NotAllowedError") {
+              BdApi.showToast("❌ Permission denied. Please allow microphone access.", { type: "error" });
+          } else {
+              BdApi.showToast("❌ Failed to start recording.", { type: "error" });
+          }
+          console.error("Error starting recording: ", error);
       }
-    }
+  }
 
     stopRecording() {
       if (this.mediaRecorder && this.recording) {
@@ -142,32 +142,34 @@ module.exports = (() => {
     }
 
     uploadRecording() {
-      const blob = new Blob(this.audioChunks, {
-        type: `audio/${this.settings.format}`,
-      });
+      if (this.audioChunks.length === 0) {
+          BdApi.showToast("❌ No audio data found.", { type: "error" });
+          console.error("No audio data available for upload.");
+          return;
+      }
+  
+      const blob = new Blob(this.audioChunks, { type: `audio/${this.settings.format}` });
       const fileName = this.settings.useRandomFilename
-        ? `${this.generateRandomFileName()}.${this.settings.format}`
-        : `${this.settings.filename}.${this.settings.format}`;
-
+          ? `${this.generateRandomFileName()}.${this.settings.format}`
+          : `${this.settings.filename}.${this.settings.format}`;
+  
       const channel = BdApi.findModuleByProps("getChannelId");
       const upload = BdApi.findModuleByProps("instantBatchUpload");
-
+  
       if (!channel || !upload) {
-        BdApi.showToast("❌ Upload module not found.", { type: "error" });
-        console.error("Upload module or channel module not found.");
-        return;
+          BdApi.showToast("❌ Upload module not found.", { type: "error" });
+          console.error("Upload module or channel module not found.");
+          return;
       }
-
+  
       upload.instantBatchUpload({
-        channelId: channel.getChannelId(),
-        files: [new File([blob], fileName)],
+          channelId: channel.getChannelId(),
+          files: [new File([blob], fileName)],
       });
-
-      BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, {
-        type: "success",
-      });
+  
+      BdApi.showToast(`🎙️ Recording uploaded as ${fileName}.`, { type: "success" });
       console.log("Recording uploaded: ", fileName);
-    }
+  }
 
     static generateRandomFileName = function () {
       const names = [
