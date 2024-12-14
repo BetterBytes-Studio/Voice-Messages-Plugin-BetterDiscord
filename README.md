@@ -71,5 +71,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) fi
 
 ### Credits
 - **Author:** UnStackss
+- **Co-Author:** Miniontoby
 - **GitHub:** [UnStackss](https://github.com/UnStackss)
 - **Plugin Library:** [BdApi](https://docs.betterdiscord.app/api/bdapi#bdapi)
