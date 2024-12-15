@@ -1,11 +1,13 @@
 /**
  * @name VoiceMessages
- * @version 0.0.1
+ * @version 1.0.3-stable
  * @author UnStackss
  * @authorId 1131965612890005626
+ * @coauthor Miniontoby
+ * @coauthorId 849180136828960799
  * @website https://github.com/UnStackss
- * @source https://github.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/tree/master
- * @updateUrl https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js
+ * @source https://github.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/tree/master
+ * @updateUrl https://raw.githubusercontent.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js
  * @invite NPa6DtPtMU
  */
 module.exports = (() => {
@@ -18,30 +20,135 @@ module.exports = (() => {
           discord_id: "1131965612890005626",
           github_username: "UnStackss",
         },
+        {
+          name: "Miniontoby",
+          discord_id: "849180136828960799",
+          github_username: "Miniontoby",
+        },
       ],
-      version: "0.0.1",
-      description:
-        "🔊 Quickly send voice messages directly in Discord! 🎤 With this plugin, you can easily record and send voice messages right to your channel. Simply press F12 to start recording and press it again to stop and send your message. Perfect for sharing updates, ideas, or just communicating more expressively with friends and your community! 🚀",
+      version: "1.0.3-stable",
+      description: 
+    "🎙️ Record and send voice messages in Discord effortlessly! Press F12 to start/stop recording and share instantly. Fully customizable with settings for audio formats, filenames, and keybinds, powered by BdApi and advanced Discord integration. 🚀",
+
       github:
-        "https://github.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/tree/master",
+        "https://github.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/tree/master",
       github_raw:
-        "https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js",
+        "https://raw.githubusercontent.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js",
     },
     changelog: [
       {
-        title: "🎙️ Send Voice Messages!",
-        items: [
-          "Now you can send voice messages effortlessly! 🎉",
-          "Press F12 to start recording, and press it again to stop and send your message! 🚀",
-        ],
+          title: "🎙️ Send Voice Messages Effortlessly!",
+          items: [
+              "✨ **Revolutionary Feature**: Introducing the ability to record and send voice messages directly in your channels! 🗣️",
+              "🎉 **How It Works**: Press `F12` to start recording, and press it again to stop and upload your voice message instantly. It's that simple! 🚀",
+              "🛠️ **Built with Power**: This feature is powered by **BdApi**, combining cutting-edge audio processing with Discord's local recording capabilities for seamless integration. 🔧",
+              "📁 **Customizable Settings**: Adjust audio formats (`.mp3`, `.ogg`, `.wav`, and more), filenames, and keybinds in an elegant settings panel designed just for you. 🎛️",
+              "🔊 **High-Quality Audio**: Includes built-in **echo cancellation** and **noise suppression** technologies for crystal-clear voice messages. 🎵",
+              "💾 **Smart File Management**: Save your recordings with customizable or randomly generated names, powered by advanced algorithms for unique naming. 🖋️",
+              "🚨 **Enhanced Feedback**: Real-time success and error notifications with stylish toast messages featuring emojis and dynamic visuals! 🌟",
+          ],
       },
-    ],
+      {
+          title: "⚙️ Feature Highlights & Technology",
+          items: [
+              "🌐 **Seamless Integration**: Built on **BdApi** for smooth functionality and compatibility with Discord's latest architecture.",
+              "🎨 **Beautiful UI**: Experience a sleek and modern interface for configuring your preferences, with interactive elements and animations.",
+              "📡 **Advanced Upload System**: Utilizes Discord's native **instantBatchUpload** technology for reliable file transfers.",
+              "🌍 **Cross-Compatibility**: Supports various audio codecs (`opus`, `mp3`, `aac`, etc.) to suit your needs and ensure compatibility with any platform.",
+          ],
+      },
+  ],  
   };
+
+  const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
+
+  class record {
+    static start = function (options) {
+      discordVoice.startLocalAudioRecording(
+          {
+              echoCancellation: true,
+              noiseCancellation: true,
+          },
+          (success) => {
+              if (success) {
+                  BdApi.showToast("🎙️ Recording started successfully!", {
+                      type: "success",
+                      icon: "✔️",
+                  });
+                  console.log("🎉 STARTED RECORDING");
+              } else {
+                  BdApi.showToast("❌ Failed to start recording. Please check your setup!", {
+                      type: "error",
+                      icon: "⚠️",
+                  });
+                  console.log("🚨 FAILED TO START RECORDING");
+              }
+          }
+      );
+  };
+  
+
+    static stop = function (channel) {
+      const settings = BdApi.getData("VoiceMessages", "settings") || {};
+      const selectedFormat = settings.format || "mp3";
+  
+      discordVoice.stopLocalAudioRecording((filePath) => {
+          if (filePath) {
+              try {
+                  require("fs").readFile(filePath, {}, (err, buf) => {
+                      if (buf) {
+                          const fileName = settings.useRandomFilename
+                              ? this.generateRandomFileName()
+                              : (settings.filename || "VoiceMessage");
+  
+                          BdApi.findModuleByProps("instantBatchUpload", "upload").instantBatchUpload({
+                              channelId: channel.getChannelId(),
+                              files: [
+                                  new File(
+                                      [new Blob([buf], { type: `audio/${selectedFormat}; codecs=opus` })],
+                                      `${fileName}.${selectedFormat}`,
+                                      { type: `audio/${selectedFormat}; codecs=opus` }
+                                  )
+                              ]
+                          });
+  
+                          BdApi.showToast("🎉 Recording uploaded successfully as `" + fileName + "." + selectedFormat + "`!", {
+                              type: "success",
+                              icon: "✔️",
+                          });
+                      } else {
+                          BdApi.showToast("❌ Oops! Failed to finish recording: " + err.message, {
+                              type: "error",
+                              icon: "⚠️",
+                          });
+                      }
+                  });
+              } catch (e) {
+                  BdApi.showToast("🚨 An unexpected error occurred: " + e.message, {
+                      type: "error",
+                      icon: "🔥",
+                  });
+                  console.error(e);
+              }
+          } else {
+              BdApi.showToast("🛑 Recording stopped but no file was generated.", {
+                  type: "warning",
+                  icon: "🛑",
+              });
+              console.log("STOPPED RECORDING");
+          }
+      });
+  };
+  
+  
+  }
+
 
   return class VoiceMessages {
     constructor() {
       this._config = config;
       this.recording = false;
+      this.onKeyDown = this.onKeyDown.bind(this)
     }
 
     getName() {
@@ -67,14 +174,14 @@ module.exports = (() => {
     }
 
     start() {
-      document.addEventListener("keydown", this.onKeyDown.bind(this));
+      document.addEventListener("keydown", this.onKeyDown);
       BdApi.showToast("VoiceMessages plugin started!", {
         type: "info",
       });
     }
 
     stop() {
-      document.removeEventListener("keydown", this.onKeyDown.bind(this));
+      document.removeEventListener("keydown", this.onKeyDown);
       BdApi.showToast("VoiceMessages plugin stopped!", {
         type: "info",
       });
@@ -98,11 +205,23 @@ module.exports = (() => {
       }
     }
 
-    // (use the settings and settings panel)
+    startRecording() {
+      record.start()
+      this.recording = true
+      BdApi.showToast("Started Recording", {
+        type: "success"
+      })
+    }
 
-    startRecording() {} // make the function to start recording
-    stopRecording() {} // make the function to stop recording, compress and upload
+    stopRecording() {
+      BdApi.showToast("Stopped Recording", {
+        type: "success"
+      })
+      this.recording = false
 
+      const channel = BdApi.findModuleByProps("getLastSelectedChannelId")
+      record.stop(channel)
+    }
 
     getSettingsPanel() {
       const settingsPanel = document.createElement("div");
