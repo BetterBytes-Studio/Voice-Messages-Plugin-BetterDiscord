@@ -27,8 +27,8 @@ module.exports = (() => {
         },
       ],
       version: "1.0.3-stable",
-      description: 
-    "🎙️ Record and send voice messages in Discord effortlessly! Press F12 to start/stop recording and share instantly. Fully customizable with settings for audio formats, filenames, and keybinds, powered by BdApi and advanced Discord integration. 🚀",
+      description:
+        "🎙️ Record and send voice messages in Discord effortlessly! Press F12 to start/stop recording and share instantly. Fully customizable with settings for audio formats, filenames, and keybinds, powered by BdApi and advanced Discord integration. 🚀",
 
       github:
         "https://github.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/tree/master",
@@ -37,119 +37,332 @@ module.exports = (() => {
     },
     changelog: [
       {
-          title: "🎙️ Send Voice Messages Effortlessly!",
-          items: [
-              "✨ **Revolutionary Feature**: Introducing the ability to record and send voice messages directly in your channels! 🗣️",
-              "🎉 **How It Works**: Press `F12` to start recording, and press it again to stop and upload your voice message instantly. It's that simple! 🚀",
-              "🛠️ **Built with Power**: This feature is powered by **BdApi**, combining cutting-edge audio processing with Discord's local recording capabilities for seamless integration. 🔧",
-              "📁 **Customizable Settings**: Adjust audio formats (`.mp3`, `.ogg`, `.wav`, and more), filenames, and keybinds in an elegant settings panel designed just for you. 🎛️",
-              "🔊 **High-Quality Audio**: Includes built-in **echo cancellation** and **noise suppression** technologies for crystal-clear voice messages. 🎵",
-              "💾 **Smart File Management**: Save your recordings with customizable or randomly generated names, powered by advanced algorithms for unique naming. 🖋️",
-              "🚨 **Enhanced Feedback**: Real-time success and error notifications with stylish toast messages featuring emojis and dynamic visuals! 🌟",
-          ],
+        title: "🎙️ Send Voice Messages Effortlessly!",
+        items: [
+          "✨ **Revolutionary Feature**: Introducing the ability to record and send voice messages directly in your channels! 🗣️",
+          "🎉 **How It Works**: Press `F12` to start recording, and press it again to stop and upload your voice message instantly. It's that simple! 🚀",
+          "🛠️ **Built with Power**: This feature is powered by **BdApi**, combining cutting-edge audio processing with Discord's local recording capabilities for seamless integration. 🔧",
+          "📁 **Customizable Settings**: Adjust audio formats (`.mp3`, `.ogg`, `.wav`, and more), filenames, and keybinds in an elegant settings panel designed just for you. 🎛️",
+          "🔊 **High-Quality Audio**: Includes built-in **echo cancellation** and **noise suppression** technologies for crystal-clear voice messages. 🎵",
+          "💾 **Smart File Management**: Save your recordings with customizable or randomly generated names, powered by advanced algorithms for unique naming. 🖋️",
+          "🚨 **Enhanced Feedback**: Real-time success and error notifications with stylish toast messages featuring emojis and dynamic visuals! 🌟",
+        ],
       },
       {
-          title: "⚙️ Feature Highlights & Technology",
-          items: [
-              "🌐 **Seamless Integration**: Built on **BdApi** for smooth functionality and compatibility with Discord's latest architecture.",
-              "🎨 **Beautiful UI**: Experience a sleek and modern interface for configuring your preferences, with interactive elements and animations.",
-              "📡 **Advanced Upload System**: Utilizes Discord's native **instantBatchUpload** technology for reliable file transfers.",
-              "🌍 **Cross-Compatibility**: Supports various audio codecs (`opus`, `mp3`, `aac`, etc.) to suit your needs and ensure compatibility with any platform.",
-          ],
+        title: "⚙️ Feature Highlights & Technology",
+        items: [
+          "🌐 **Seamless Integration**: Built on **BdApi** for smooth functionality and compatibility with Discord's latest architecture.",
+          "🎨 **Beautiful UI**: Experience a sleek and modern interface for configuring your preferences, with interactive elements and animations.",
+          "📡 **Advanced Upload System**: Utilizes Discord's native **instantBatchUpload** technology for reliable file transfers.",
+          "🌍 **Cross-Compatibility**: Supports various audio codecs (`opus`, `mp3`, `aac`, etc.) to suit your needs and ensure compatibility with any platform.",
+        ],
       },
-  ],  
+    ],
   };
 
-  const discordVoice = DiscordNative.nativeModules.requireModule("discord_voice");
+  const discordVoice =
+    DiscordNative.nativeModules.requireModule("discord_voice");
 
   class record {
     static start = function (options) {
       discordVoice.startLocalAudioRecording(
-          {
-              echoCancellation: true,
-              noiseCancellation: true,
-          },
-          (success) => {
-              if (success) {
-                  BdApi.showToast("🎙️ Recording started successfully!", {
-                      type: "success",
-                      icon: "✔️",
-                  });
-                  console.log("🎉 STARTED RECORDING");
-              } else {
-                  BdApi.showToast("❌ Failed to start recording. Please check your setup!", {
-                      type: "error",
-                      icon: "⚠️",
-                  });
-                  console.log("🚨 FAILED TO START RECORDING");
+        {
+          echoCancellation: true,
+          noiseCancellation: true,
+        },
+        (success) => {
+          if (success) {
+            BdApi.showToast("🎙️ Recording started successfully!", {
+              type: "success",
+              icon: "✔️",
+            });
+            console.log("🎉 STARTED RECORDING");
+          } else {
+            BdApi.showToast(
+              "❌ Failed to start recording. Please check your setup!",
+              {
+                type: "error",
+                icon: "⚠️",
               }
+            );
+            console.log("🚨 FAILED TO START RECORDING");
           }
+        }
       );
-  };
-  
+    };
 
     static stop = function (channel) {
       const settings = BdApi.getData("VoiceMessages", "settings") || {};
       const selectedFormat = settings.format || "mp3";
-  
-      discordVoice.stopLocalAudioRecording((filePath) => {
-          if (filePath) {
-              try {
-                  require("fs").readFile(filePath, {}, (err, buf) => {
-                      if (buf) {
-                          const fileName = settings.useRandomFilename
-                              ? this.generateRandomFileName()
-                              : (settings.filename || "VoiceMessage");
-  
-                          BdApi.findModuleByProps("instantBatchUpload", "upload").instantBatchUpload({
-                              channelId: channel.getChannelId(),
-                              files: [
-                                  new File(
-                                      [new Blob([buf], { type: `audio/${selectedFormat}; codecs=opus` })],
-                                      `${fileName}.${selectedFormat}`,
-                                      { type: `audio/${selectedFormat}; codecs=opus` }
-                                  )
-                              ]
-                          });
-  
-                          BdApi.showToast("🎉 Recording uploaded successfully as `" + fileName + "." + selectedFormat + "`!", {
-                              type: "success",
-                              icon: "✔️",
-                          });
-                      } else {
-                          BdApi.showToast("❌ Oops! Failed to finish recording: " + err.message, {
-                              type: "error",
-                              icon: "⚠️",
-                          });
-                      }
-                  });
-              } catch (e) {
-                  BdApi.showToast("🚨 An unexpected error occurred: " + e.message, {
-                      type: "error",
-                      icon: "🔥",
-                  });
-                  console.error(e);
-              }
-          } else {
-              BdApi.showToast("🛑 Recording stopped but no file was generated.", {
-                  type: "warning",
-                  icon: "🛑",
-              });
-              console.log("STOPPED RECORDING");
-          }
-      });
-  };
-  
-  
-  }
 
+      discordVoice.stopLocalAudioRecording((filePath) => {
+        if (filePath) {
+          try {
+            require("fs").readFile(filePath, {}, (err, buf) => {
+              if (buf) {
+                const fileName =
+                  settings.useRandomFilename !== false
+                    ? this.generateRandomFileName()
+                    : settings.filename || "VoiceMessage";
+
+                BdApi.findModuleByProps(
+                  "instantBatchUpload",
+                  "upload"
+                ).instantBatchUpload({
+                  channelId: channel.getChannelId(),
+                  files: [
+                    new File(
+                      [
+                        new Blob([buf], {
+                          type: `audio/${selectedFormat}; codecs=opus`,
+                        }),
+                      ],
+                      `${fileName}.${selectedFormat}`,
+                      { type: `audio/${selectedFormat}; codecs=opus` }
+                    ),
+                  ],
+                });
+
+                BdApi.showToast(
+                  "🎉 Recording uploaded successfully as `" +
+                    fileName +
+                    "." +
+                    selectedFormat +
+                    "`!",
+                  {
+                    type: "success",
+                    icon: "✔️",
+                  }
+                );
+              } else {
+                BdApi.showToast(
+                  "❌ Oops! Failed to finish recording: " + err.message,
+                  {
+                    type: "error",
+                    icon: "⚠️",
+                  }
+                );
+              }
+            });
+          } catch (e) {
+            BdApi.showToast("🚨 An unexpected error occurred: " + e.message, {
+              type: "error",
+              icon: "🔥",
+            });
+            console.error(e);
+          }
+        } else {
+          BdApi.showToast("🛑 Recording stopped but no file was generated.", {
+            type: "warning",
+            icon: "🛑",
+          });
+          console.log("STOPPED RECORDING");
+        }
+      });
+    };
+
+    static generateRandomFileName = function () {
+      const names = [
+        "PixelPurr😺",
+        "FuzzyFling🦄",
+        "ChirpChomp🐦",
+        "BlipBop🎉",
+        "DoodlePop🧚‍♀️",
+        "SizzleSnap🔥",
+        "GlimmerGlow🌟",
+        "SqueakZoom🐭",
+        "FizzFizz💧",
+        "BuzzBop💥",
+        "ZapZap⚡",
+        "TwinkleTee✨",
+        "SparkleSwoosh💫",
+        "TwangTee🎵",
+        "QuirkyQuip🤪",
+        "ChirpBing🐣",
+        "PopFizz🍾",
+        "DoodleBloop🌀",
+        "GlimmerPop💎",
+        "SqueakZap⚡️",
+        "TwistyTing🎠",
+        "SnappySparkle✨",
+        "WhisperWiz🌌",
+        "GlitzyGlimpse💫",
+        "FuzzyFizz🐼",
+        "BubblyBuzz💧",
+        "SlickSizzle🔥",
+        "QuirkyChirp🐦",
+        "DazzleGlow🌟",
+        "GlimmerSnap✨",
+        "WhisperTing🕊️",
+        "PopFizz🎈",
+        "SqueakySnap🐭",
+        "FizzFizz💦",
+        "BuzzBling💎",
+        "TwinklePop🌠",
+        "DoodleSwoosh🌌",
+        "SnapSparkle🌟",
+        "BlingBop💥",
+        "WhisperFizz✨",
+        "GlimmerTee🎵",
+        "SizzleBling🔥",
+        "PopBling💫",
+        "TwistySwoosh🎠",
+        "WhisperSparkle🌌",
+        "GlitzyChirp🐦",
+        "FizzBling💧",
+        "BuzzPop💥",
+        "SlickTing🔥",
+        "QuirkyBop🤪",
+        "ChirpSizzle🐦",
+        "TwistBling🎠",
+        "DoodlePop💎",
+        "GlimmerSwoosh✨",
+        "SnapBuzz💧",
+        "WhisperPop🌌",
+        "FizzTing💦",
+        "BuzzSnap💥",
+        "SizzleChirp🔥",
+        "TwistSwoosh🎠",
+        "PopFizz✨",
+        "GlimmerBop💎",
+        "ChirpTing🐦",
+        "WhisperSwoosh🌌",
+        "TwistPop🎠",
+        "DoodleSnap💫",
+        "SizzleFling🔥",
+        "BuzzBling💥",
+        "TwistBop🎠",
+        "GlimmerFizz✨",
+        "PopTing💦",
+        "SlickSnap🔥",
+        "BlingChirp💎",
+        "WhisperBling🌌",
+        "DoodleFling🌀",
+        "FizzBuzz💦",
+        "TwistBling🎠",
+        "PopSizzle💥",
+        "ChirpBling🐦",
+        "GlimmerSwoosh✨",
+        "FizzPop💧",
+        "TwistSnap🎠",
+        "BlingSizzle💫",
+        "WhisperFizz🌌",
+        "DoodleBop💫",
+        "FizzBop💦",
+        "GlimmerFling💎",
+        "SizzlePop🔥",
+        "TwistTee🎠",
+        "WhisperSnap🌌",
+        "PopFizz💥",
+        "BlingSwoosh💫",
+        "ChirpTee🐦",
+        "TwistBling🎠",
+        "DoodleSnap💫",
+        "GlitterBuzz💫",
+        "SqueakBling🐭",
+        "BuzzFizz💥",
+        "ChirpDazzle🐦",
+        "TwistFizz🎠",
+        "DoodleBling🌀",
+        "SparkleChirp💫",
+        "PopSnap💧",
+        "FizzChirp💦",
+        "BlingSwoosh🎠",
+        "SizzlePop💥",
+        "TwistBuzz🔥",
+        "DoodleFizz🌀",
+        "ChirpTing🐦",
+        "SlickBling🔥",
+        "WhisperPop🌌",
+        "BuzzSwoosh💥",
+        "GlimmerChirp💎",
+        "FizzSnap💦",
+        "BlingTwist🎠",
+        "DoodleBling💎",
+        "SizzleChirp🐦",
+        "BuzzFizz💦",
+        "PopSparkle💫",
+        "TwistFizz🎠",
+        "ChirpSizzle🐦",
+        "FizzBop💧",
+        "DoodleBling🌀",
+        "WhisperBuzz🌌",
+        "SizzleFizz🔥",
+        "BuzzChirp💥",
+        "TwistBop🎠",
+        "GlimmerFizz💎",
+        "SlickFizz🔥",
+        "PopTwist🎈",
+        "DoodleBuzz🌀",
+        "FizzSnap💦",
+        "ChirpPop🐦",
+        "TwistBling🎠",
+        "SizzleBuzz🔥",
+        "GlimmerBling💎",
+        "PopSizzle💥",
+        "WhisperFling🌌",
+        "BuzzFizz💥",
+        "DoodleChirp🌀",
+        "FizzPop💧",
+        "TwistSnap🎠",
+        "SizzleBling🔥",
+        "WhisperBop🌌",
+        "BuzzFizz💦",
+        "ChirpTwist🐦",
+        "DoodleFizz🌀",
+        "SizzleFizz🔥",
+        "FizzBop💧",
+        "GlimmerBling💎",
+        "BuzzSnap💥",
+        "PopChirp🎈",
+        "TwistSizzle🎠",
+        "WhisperSnap🌌",
+        "FizzBuzz💦",
+        "DoodleChirp💫",
+        "SizzleFizz🔥",
+        "ChirpBling🐦",
+        "PopFizz💥",
+        "BuzzFizz💦",
+        "FizzBop💧",
+        "TwistFizz🎠",
+        "GlimmerFizz💎",
+        "WhisperBuzz🌌",
+        "SizzleBling🔥",
+        "DoodleSnap🌀",
+        "FizzPop💧",
+        "ChirpFizz🐦",
+        "TwistBuzz🎠",
+        "SizzleBling🔥",
+        "PopSnap💥",
+        "FizzChirp💦",
+        "BuzzBling💥",
+        "DoodleFizz🌀",
+        "WhisperFizz🌌",
+      ];
+      return names[Math.floor(Math.random() * names.length)];
+    };
+  }
 
   return class VoiceMessages {
     constructor() {
       this._config = config;
       this.recording = false;
-      this.onKeyDown = this.onKeyDown.bind(this)
+      this.onKeyDown = this.onKeyDown.bind(this);
     }
+
+    static initializeSettings = function () {
+      const defaultSettings = {
+        useRandomFilename: true,
+        format: "mp3",
+        filename: "",
+      };
+
+      const currentSettings = BdApi.getData("VoiceMessages", "settings") || {};
+      BdApi.saveData("VoiceMessages", "settings", {
+        ...defaultSettings,
+        ...currentSettings,
+      });
+    };
 
     getName() {
       return config.info.name;
@@ -206,21 +419,21 @@ module.exports = (() => {
     }
 
     startRecording() {
-      record.start()
-      this.recording = true
+      record.start();
+      this.recording = true;
       BdApi.showToast("Started Recording", {
-        type: "success"
-      })
+        type: "success",
+      });
     }
 
     stopRecording() {
       BdApi.showToast("Stopped Recording", {
-        type: "success"
-      })
-      this.recording = false
+        type: "success",
+      });
+      this.recording = false;
 
-      const channel = BdApi.findModuleByProps("getLastSelectedChannelId")
-      record.stop(channel)
+      const channel = BdApi.findModuleByProps("getLastSelectedChannelId");
+      record.stop(channel);
     }
 
     getSettingsPanel() {
