@@ -434,7 +434,7 @@ module.exports = (() => {
       settingsPanel.innerHTML = `
         <style>
           .settings-panel {
-            background-color: #121212;
+            background-color: #171722;
             color: #E0E0E0;
             padding: 20px;
             border-radius: 8px;
@@ -446,8 +446,8 @@ module.exports = (() => {
           }
   
           .feature-card {
-            background-color: #1E1E1E;
-            border: 1px solid #333;
+            background-color: #1a1b26;
+            border: 1px solid #13131a;
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 15px;
@@ -484,8 +484,8 @@ module.exports = (() => {
             margin-top: 10px;
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #333;
-            background-color: #1E1E1E;
+            border: 1px solid #13131a;
+            background-color: #1a1b26;
             color: #FFF;
             outline: none;
             font-size: 1em;
@@ -587,7 +587,7 @@ border-radius: 50%;
 
 .custom-radio {
 appearance: none;
-background-color: #1E1E1E;
+background-color: #1a1b26;
 margin: 0;
 font: inherit;
 width: 20px;
