@@ -1,10 +1,8 @@
 /**
  * @name VoiceMessages
  * @version 1.0.3-stable
- * @author UnStackss
+ * @author UnStackss, MinionToby
  * @authorId 1131965612890005626
- * @coauthor Miniontoby
- * @coauthorId 849180136828960799
  * @website https://github.com/UnStackss
  * @source https://github.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/tree/master
  * @updateUrl https://raw.githubusercontent.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js
