@@ -421,15 +421,9 @@ module.exports = (() => {
     startRecording() {
       record.start();
       this.recording = true;
-      BdApi.showToast("Started Recording", {
-        type: "success",
-      });
     }
 
     stopRecording() {
-      BdApi.showToast("Stopped Recording", {
-        type: "success",
-      });
       this.recording = false;
 
       const channel = BdApi.findModuleByProps("getLastSelectedChannelId");
