@@ -1,8 +1,8 @@
 # VoiceMessages Plugin for BetterDiscord
 
-![Downloads](https://img.shields.io/github/downloads/UnStackss/Voice-Messages-Plugin-BetterDiscord/total?style=for-the-badge)
-![Latest Release](https://img.shields.io/github/v/release/UnStackss/Voice-Messages-Plugin-BetterDiscord?style=for-the-badge)
-![License](https://img.shields.io/github/license/UnStackss/Voice-Messages-Plugin-BetterDiscord?style=for-the-badge)
+![Downloads](https://img.shields.io/github/downloads/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/total?style=for-the-badge)
+![Latest Release](https://img.shields.io/github/v/release/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord?style=for-the-badge)
+![License](https://img.shields.io/github/license/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord?style=for-the-badge)
 
 ## Overview
 VoiceMessages is a simple yet powerful plugin for BetterDiscord that allows users to send voice messages in their Discord channels. 🎙️
@@ -23,7 +23,7 @@ Ensure you have BetterDiscord installed. If you don’t, download it from [Bette
 ### Steps
 
 1. **Download the Plugin**
-   - Download the VoiceMessages plugin from [GitHub](https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js).
+   - Download the VoiceMessages plugin from [GitHub](https://raw.githubusercontent.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js).
 
 2. **Enable the Plugin**
    - Open Discord, navigate to User Settings > Plugins, and enable `VoiceMessages`.
