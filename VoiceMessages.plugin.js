@@ -4,8 +4,8 @@
  * @author UnStackss, MinionToby
  * @authorId 1131965612890005626
  * @website https://github.com/UnStackss
- * @source https://github.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/tree/master
- * @updateUrl https://raw.githubusercontent.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js
+ * @source https://github.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/tree/master
+ * @updateUrl https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js
  * @invite NPa6DtPtMU
  */
 module.exports = (() => {
@@ -29,9 +29,9 @@ module.exports = (() => {
         "🎙️ Record and send voice messages in Discord effortlessly! Press F12 to start/stop recording and share instantly. Fully customizable with settings for audio formats, filenames, and keybinds, powered by BdApi and advanced Discord integration. 🚀",
 
       github:
-        "https://github.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/tree/master",
+        "https://github.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/tree/master",
       github_raw:
-        "https://raw.githubusercontent.com/BetterBytes-Studio/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js",
+        "https://raw.githubusercontent.com/UnStackss/Voice-Messages-Plugin-BetterDiscord/master/VoiceMessages.plugin.js",
     },
     changelog: [
       {
